@@ -23,19 +23,19 @@ export function Hero() {
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/90 backdrop-blur">
             <Sparkles className="h-3.5 w-3.5 text-accent" />
-            Built for Indian manufacturing & industrial procurement
+            Built for businesses with a vision.
           </div>
 
           <h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight text-white md:text-6xl lg:text-7xl">
             Protected procurement <br />
             <span className="bg-gradient-to-r from-accent to-[oklch(0.9_0.14_85)] bg-clip-text text-transparent">
-              for serious manufacturers.
+              for modern businesses.
             </span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/75 md:text-xl">
-            Verified suppliers. Escrow-backed transactions. Full RFQ-to-payment workflow.
-            The procurement operating system replacing Excel, WhatsApp and trust on faith.
+            Verified suppliers. Escrow-backed transactions. Full RFQ-to-payment workflow. The procurement operating
+            system replacing Excel, WhatsApp and trust on faith.
           </p>
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
@@ -43,7 +43,11 @@ export function Hero() {
               Start sourcing
               <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
-            <Button size="lg" variant="outline" className="border-white/25 bg-white/5 text-white backdrop-blur hover:bg-white/10 hover:text-white">
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-white/25 bg-white/5 text-white backdrop-blur hover:bg-white/10 hover:text-white"
+            >
               List as supplier
             </Button>
           </div>
