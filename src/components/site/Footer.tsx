@@ -1,6 +1,16 @@
 import { Factory } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function Footer() {
+  const { t } = useTranslation();
+  const platformLinks = t("footer.platformLinks", { returnObjects: true }) as string[];
+  const companyLinks = t("footer.companyLinks", { returnObjects: true }) as string[];
+
+  const cols = [
+    { h: t("footer.platform"), l: platformLinks },
+    { h: t("footer.company"), l: companyLinks },
+  ];
+
   return (
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-6 py-12">
@@ -12,15 +22,10 @@ export function Footer() {
               </div>
               <span className="text-lg font-bold tracking-tight">ProcureGrid</span>
             </div>
-            <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-              Protected procurement infrastructure for Indian manufacturing.
-            </p>
+            <p className="mt-4 max-w-sm text-sm text-muted-foreground">{t("footer.tagline")}</p>
           </div>
 
-          {[
-            { h: "Platform", l: ["Suppliers", "Workflow", "Escrow", "Analytics"] },
-            { h: "Company", l: ["About", "Pricing", "Careers", "Contact"] },
-          ].map((c) => (
+          {cols.map((c) => (
             <div key={c.h}>
               <div className="text-sm font-semibold">{c.h}</div>
               <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
@@ -32,11 +37,11 @@ export function Footer() {
           ))}
         </div>
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground md:flex-row md:items-center">
-          <div>© {new Date().getFullYear()} ProcureGrid Technologies Pvt. Ltd.</div>
+          <div>© {new Date().getFullYear()} {t("footer.rights")}</div>
           <div className="flex gap-5">
-            <a href="#" className="hover:text-foreground">Privacy</a>
-            <a href="#" className="hover:text-foreground">Terms</a>
-            <a href="#" className="hover:text-foreground">Security</a>
+            <a href="#" className="hover:text-foreground">{t("footer.privacy")}</a>
+            <a href="#" className="hover:text-foreground">{t("footer.terms")}</a>
+            <a href="#" className="hover:text-foreground">{t("footer.security")}</a>
           </div>
         </div>
       </div>
