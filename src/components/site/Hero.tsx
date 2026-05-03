@@ -6,7 +6,7 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden">
       {/* Background image with overlay */}
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0">
         <img
           src={heroImg}
           alt="Indian manufacturing factory floor with CNC machines"
@@ -19,7 +19,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_oklch(0.55_0.18_250_/_0.25),_transparent_60%)]" />
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-24 md:py-32 lg:py-40">
+      <div className="relative mx-auto max-w-7xl px-6 py-24 md:py-32 lg:py-40">
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/90 backdrop-blur">
             <Sparkles className="h-3.5 w-3.5 text-accent" />
