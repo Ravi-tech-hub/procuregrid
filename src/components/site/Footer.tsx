@@ -3,8 +3,10 @@ import { useTranslation } from "react-i18next";
 
 export function Footer() {
   const { t } = useTranslation();
-  const platformLinks = t("footer.platformLinks", { returnObjects: true }) as string[];
-  const companyLinks = t("footer.companyLinks", { returnObjects: true }) as string[];
+  const pl = t("footer.platformLinks", { returnObjects: true });
+  const cl = t("footer.companyLinks", { returnObjects: true });
+  const platformLinks = Array.isArray(pl) ? (pl as string[]) : [];
+  const companyLinks = Array.isArray(cl) ? (cl as string[]) : [];
 
   const cols = [
     { h: t("footer.platform"), l: platformLinks },
