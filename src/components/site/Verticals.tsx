@@ -2,7 +2,8 @@ import { useTranslation } from "react-i18next";
 
 export function Verticals() {
   const { t } = useTranslation();
-  const items = t("verticals.items", { returnObjects: true }) as string[];
+  const raw = t("verticals.items", { returnObjects: true });
+  const items = Array.isArray(raw) ? (raw as string[]) : [];
   return (
     <section className="bg-surface py-20">
       <div className="mx-auto max-w-7xl px-6">

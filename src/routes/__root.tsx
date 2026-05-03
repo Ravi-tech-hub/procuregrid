@@ -1,7 +1,8 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { I18nextProvider } from "react-i18next";
 
 import appCss from "../styles.css?url";
-import "../i18n";
+import i18n from "../i18n";
 
 function NotFoundComponent() {
   return (
@@ -55,5 +56,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  return (
+    <I18nextProvider i18n={i18n}>
+      <Outlet />
+    </I18nextProvider>
+  );
 }
