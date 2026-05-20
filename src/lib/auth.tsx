@@ -26,11 +26,13 @@ type AuthContextValue = {
   membership: MembershipRecord | null;
   company: CompanyRecord | null;
   loading: boolean;
-  refreshMembership: () => Promise<void>;
+  refreshMembership: () => Promise<{
+    membership: MembershipRecord | null;
+    company: CompanyRecord | null;
+  }>;
   refreshSession: () => Promise<{
     session: Session | null;
     user: User | null;
-    company: CompanyRecord | null;
   }>;
   signOut: () => Promise<void>;
 };
@@ -67,8 +69,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function loadMembership(nextUser: User | null) {
     if (!nextUser) {
-      setMembership(null);
-      setCompany(null);
       return { membership: null, company: null };
     }
 
@@ -86,8 +86,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     if (error || !data?.length) {
-      setMembership(null);
-      setCompany(null);
       return { membership: null, company: null };
     }
 
@@ -100,25 +98,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     const nextCompany = companyError || !companyData?.length ? null : (companyData[0] as CompanyRecord);
-    setMembership(nextMembership);
-    setCompany(nextCompany);
     return { membership: nextMembership, company: nextCompany };
   }
 
   async function refreshMembership() {
-    await loadMembership(user);
+    const nextState = await loadMembership(user);
+    setMembership(nextState.membership);
+    setCompany(nextState.company);
+    return nextState;
   }
 
-  async function applySession(nextSession: Session | null) {
+  function setAuthSession(nextSession: Session | null) {
     setSession(nextSession);
     setUser(nextSession?.user ?? null);
-    const nextMembershipState = await loadMembership(nextSession?.user ?? null);
 
-    return {
-      session: nextSession,
-      user: nextSession?.user ?? null,
-      company: nextMembershipState.company,
-    };
+    if (!nextSession?.user) {
+      setMembership(null);
+      setCompany(null);
+    }
   }
 
   async function refreshSession() {
@@ -127,7 +124,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       data: { session: currentSession },
     } = await supabase.auth.getSession();
 
-    return applySession(currentSession);
+    setAuthSession(currentSession);
+
+    return {
+      session: currentSession,
+      user: currentSession?.user ?? null,
+    };
   }
 
   async function signOut() {
@@ -167,14 +169,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       if (!mounted) return;
 
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-
-      if (!nextSession?.user) {
-        setMembership(null);
-        setCompany(null);
-      }
-
+      setAuthSession(nextSession);
       setLoading(false);
     });
 

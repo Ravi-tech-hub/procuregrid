@@ -17,10 +17,10 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          <a href="#platform" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.platform")}</a>
-          <a href="#workflow" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.workflow")}</a>
-          <a href="#trust" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.trust")}</a>
-          <a href="#pricing" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.pricing")}</a>
+          <a href="/#platform" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.platform")}</a>
+          <a href="/#workflow" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.workflow")}</a>
+          <a href="/#trust" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.trust")}</a>
+          <a href="/#pricing" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t("nav.pricing")}</a>
         </nav>
 
         <div className="flex items-center gap-1 sm:gap-2">

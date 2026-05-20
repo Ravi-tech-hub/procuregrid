@@ -1,19 +1,22 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Building2, LoaderCircle, LogOut, ShieldCheck, UserRound } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth";
-import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { getUserPrimaryIdentifier } from "@/lib/auth-identifiers";
 
 export const Route = createFileRoute("/app")({
   component: AppHomePage,
 });
 
 function AppHomePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, membership, company, loading, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
+  const primaryIdentifier = getUserPrimaryIdentifier(user ?? {});
 
   useEffect(() => {
     if (loading) return;
@@ -46,16 +49,16 @@ function AppHomePage() {
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.25em] text-primary-glow">Sprint 1</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight">Authenticated workspace</h1>
+            <p className="text-sm uppercase tracking-[0.25em] text-primary-glow">{t("appShell.sprintLabel")}</p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight">{t("appShell.title")}</h1>
             <p className="mt-2 max-w-2xl text-muted-foreground">
-              You are signed in, attached to a company tenant, and inside the first protected application shell.
+              {t("appShell.description")}
             </p>
           </div>
 
           <Button variant="outline" onClick={handleSignOut}>
             {signingOut ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
-            Sign out
+            {t("common.signOut")}
           </Button>
         </div>
 
@@ -64,14 +67,14 @@ function AppHomePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Building2 className="h-4 w-4 text-primary" />
-                Company
+                {t("appShell.companyCardTitle")}
               </CardTitle>
-              <CardDescription>Your active tenant for all protected data.</CardDescription>
+              <CardDescription>{t("appShell.companyCardDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
-              <p><span className="font-medium">Name:</span> {company?.name ?? "Not set"}</p>
-              <p><span className="font-medium">Type:</span> {company?.company_type ?? "Not set"}</p>
-              <p><span className="font-medium">Industry:</span> {company?.industry_category ?? "Not set"}</p>
+              <p><span className="font-medium">{t("appShell.companyNameLabel")}:</span> {company?.name ?? t("common.notSet")}</p>
+              <p><span className="font-medium">{t("appShell.companyTypeLabel")}:</span> {company?.company_type ?? t("common.notSet")}</p>
+              <p><span className="font-medium">{t("appShell.companyIndustryLabel")}:</span> {company?.industry_category ?? t("common.notSet")}</p>
             </CardContent>
           </Card>
 
@@ -79,13 +82,13 @@ function AppHomePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <UserRound className="h-4 w-4 text-primary" />
-                User
+                {t("appShell.userCardTitle")}
               </CardTitle>
-              <CardDescription>Your current authenticated identity.</CardDescription>
+              <CardDescription>{t("appShell.userCardDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
-              <p><span className="font-medium">Email:</span> {user?.email ?? "Unknown"}</p>
-              <p><span className="font-medium">User ID:</span> {user?.id ?? "Unknown"}</p>
+              <p><span className="font-medium">{t("appShell.userIdentifierLabel")}:</span> {primaryIdentifier ?? t("common.unknown")}</p>
+              <p><span className="font-medium">{t("appShell.userIdLabel")}:</span> {user?.id ?? t("common.unknown")}</p>
             </CardContent>
           </Card>
 
@@ -93,13 +96,13 @@ function AppHomePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <ShieldCheck className="h-4 w-4 text-primary" />
-                Access
+                {t("appShell.accessCardTitle")}
               </CardTitle>
-              <CardDescription>The first RBAC baseline for ProcureGrid.</CardDescription>
+              <CardDescription>{t("appShell.accessCardDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
-              <p><span className="font-medium">Role:</span> {membership?.role ?? "Not set"}</p>
-              <p><span className="font-medium">Membership:</span> {membership?.status ?? "Not set"}</p>
+              <p><span className="font-medium">{t("appShell.accessRoleLabel")}:</span> {membership?.role ?? t("common.notSet")}</p>
+              <p><span className="font-medium">{t("appShell.accessMembershipLabel")}:</span> {membership?.status ?? t("common.notSet")}</p>
             </CardContent>
           </Card>
         </div>
