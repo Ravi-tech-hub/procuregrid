@@ -36,6 +36,16 @@ export function isManualPhoneAuthEnabled() {
   return MANUAL_PHONE_AUTH_ENABLED;
 }
 
+function isAlreadyRegisteredError(message: string | undefined) {
+  const normalized = message?.toLowerCase() ?? "";
+  return (
+    normalized.includes("already registered") ||
+    normalized.includes("already exists") ||
+    normalized.includes("user already registered") ||
+    normalized.includes("already been registered")
+  );
+}
+
 export async function beginPhoneAuth({ supabase, phone, fullName, mode }: BeginPhoneAuthParams) {
   if (MANUAL_PHONE_AUTH_ENABLED) {
     return {
@@ -119,7 +129,9 @@ export async function completePhoneSignup({
   });
 
   if (signUpError) {
-    return { error: signUpError };
+    if (!isAlreadyRegisteredError(signUpError.message)) {
+      return { error: signUpError };
+    }
   }
 
   const { error: signInError } = await supabase.auth.signInWithPassword({

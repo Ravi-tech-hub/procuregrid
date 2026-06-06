@@ -36,12 +36,24 @@ export const resources = {
         subtitle:
           "Manufacturers lose time, money and trust to a workflow held together by spreadsheets and goodwill.",
         items: {
-          excel: { t: "Excel-driven RFQs", d: "Quotations scattered across spreadsheets and inboxes." },
-          whatsapp: { t: "WhatsApp negotiations", d: "No record, no audit trail, no accountability." },
-          trust: { t: "Low supplier trust", d: "No structured verification, frequent fraud and fakes." },
+          excel: {
+            t: "Excel-driven RFQs",
+            d: "Quotations scattered across spreadsheets and inboxes.",
+          },
+          whatsapp: {
+            t: "WhatsApp negotiations",
+            d: "No record, no audit trail, no accountability.",
+          },
+          trust: {
+            t: "Low supplier trust",
+            d: "No structured verification, frequent fraud and fakes.",
+          },
           payments: { t: "Delayed payments", d: "Disputes drag on for weeks without resolution." },
           visibility: { t: "Zero visibility", d: "No supplier performance, no spend analytics." },
-          credit: { t: "Credit chaos", d: "Buyers and suppliers fly blind on payment reliability." },
+          credit: {
+            t: "Credit chaos",
+            d: "Buyers and suppliers fly blind on payment reliability.",
+          },
         },
       },
       modules: {
@@ -93,9 +105,18 @@ export const resources = {
         title: "The moat isn't listings. It's the data.",
         subtitle:
           "Every transaction tightens the network. Trust scores, escrow behavior and procurement history compound into infrastructure rivals can't replicate.",
-        f1: { t: "Verified-only network", d: "GST, factory and certification checks before a single RFQ." },
-        f2: { t: "Living trust scores", d: "Score adjusts in real time based on delivery, defects and disputes." },
-        f3: { t: "Complete audit trail", d: "Every quote, PO and payment timestamped and immutable." },
+        f1: {
+          t: "Verified-only network",
+          d: "GST, factory and certification checks before a single RFQ.",
+        },
+        f2: {
+          t: "Living trust scores",
+          d: "Score adjusts in real time based on delivery, defects and disputes.",
+        },
+        f3: {
+          t: "Complete audit trail",
+          d: "Every quote, PO and payment timestamped and immutable.",
+        },
         card: {
           supplier: "Supplier",
           name: "Apex Sheet Metal Works",
@@ -127,7 +148,8 @@ export const resources = {
       },
       cta: {
         title: "Run procurement like infrastructure.",
-        subtitle: "Plans from ₹5,000/mo for SMEs. Verification, escrow and analytics included on every tier.",
+        subtitle:
+          "Plans from ₹5,000/mo for SMEs. Verification, escrow and analytics included on every tier.",
         bookDemo: "Book a 20-min demo",
         talkSales: "Talk to sales",
       },
@@ -174,6 +196,9 @@ export const resources = {
           signupPrompt: "New to ProcureGrid?",
           signupLink: "Create your account",
           invalidIdentifier: "Enter a valid email or an E.164 phone number like +919876543210.",
+          emailNotFound: "No account exists for this email address.",
+          phoneNotFound: "No account exists for this phone number.",
+          wrongPassword: "Incorrect password. Please try again.",
           stageSigningIn: "Signing you in...",
           stageLoadingWorkspace: "Loading your workspace...",
           stageLoadingWorkspaceDetails: "Loading your workspace details...",
@@ -208,11 +233,13 @@ export const resources = {
         onboarding: {
           checkingWorkspace: "Checking your workspace...",
           heroBadge: "Company setup creates your first protected tenant",
-          heroTitle: "Establish the company workspace your whole procurement flow will run through.",
+          heroTitle:
+            "Establish the company workspace your whole procurement flow will run through.",
           heroSubtitle:
             "This first setup step assigns tenant ownership, ties your account to the company, and prepares your protected application shell.",
           title: "Set up your company workspace",
-          description: "This creates your first tenant and makes you the company admin for Sprint 1.",
+          description:
+            "This creates your first tenant and makes you the company admin for Sprint 1.",
           companyNameLabel: "Company name",
           companyNamePlaceholder: "ProcureGrid Technologies Pvt. Ltd.",
           companyTypeLabel: "Company type",
@@ -303,10 +330,16 @@ export const resources = {
           "निर्माता समय, पैसा और भरोसा खोते हैं स्प्रेडशीट और सद्भावना पर टिके वर्कफ़्लो में।",
         items: {
           excel: { t: "एक्सेल-आधारित RFQ", d: "स्प्रेडशीट और इनबॉक्स में बिखरे कोटेशन।" },
-          whatsapp: { t: "व्हाट्सऐप पर सौदेबाज़ी", d: "कोई रिकॉर्ड नहीं, कोई ऑडिट नहीं, कोई जवाबदेही नहीं।" },
+          whatsapp: {
+            t: "व्हाट्सऐप पर सौदेबाज़ी",
+            d: "कोई रिकॉर्ड नहीं, कोई ऑडिट नहीं, कोई जवाबदेही नहीं।",
+          },
           trust: { t: "कम आपूर्तिकर्ता भरोसा", d: "संरचित सत्यापन का अभाव, बार-बार धोखाधड़ी।" },
           payments: { t: "देर से भुगतान", d: "विवाद हफ़्तों तक बिना समाधान के चलते हैं।" },
-          visibility: { t: "शून्य दृश्यता", d: "कोई आपूर्तिकर्ता प्रदर्शन नहीं, कोई खर्च विश्लेषण नहीं।" },
+          visibility: {
+            t: "शून्य दृश्यता",
+            d: "कोई आपूर्तिकर्ता प्रदर्शन नहीं, कोई खर्च विश्लेषण नहीं।",
+          },
           credit: { t: "क्रेडिट अराजकता", d: "खरीदार और आपूर्तिकर्ता भुगतान विश्वसनीयता पर अंधे।" },
         },
       },
@@ -316,12 +349,27 @@ export const resources = {
         subtitle:
           "खरीद-केंद्रित। विनिर्माण-केंद्रित। SMEs और मध्यम कारख़ानों के लिए — एंटरप्राइज़ IT के लिए नहीं।",
         items: {
-          verification: { t: "आपूर्तिकर्ता सत्यापन", d: "GST, PAN, फ़ैक्टरी निरीक्षण और वीडियो सत्यापन। चार ट्रस्ट टियर।" },
-          workflow: { t: "खरीद वर्कफ़्लो", d: "PR → RFQ → कोट → PO → शिपमेंट → GRN → इनवॉइस → भुगतान।" },
-          escrow: { t: "सुरक्षित लेनदेन", d: "विनियमित एस्क्रो साझेदार धन रखता है। दोनों पक्ष सुरक्षित।" },
+          verification: {
+            t: "आपूर्तिकर्ता सत्यापन",
+            d: "GST, PAN, फ़ैक्टरी निरीक्षण और वीडियो सत्यापन। चार ट्रस्ट टियर।",
+          },
+          workflow: {
+            t: "खरीद वर्कफ़्लो",
+            d: "PR → RFQ → कोट → PO → शिपमेंट → GRN → इनवॉइस → भुगतान।",
+          },
+          escrow: {
+            t: "सुरक्षित लेनदेन",
+            d: "विनियमित एस्क्रो साझेदार धन रखता है। दोनों पक्ष सुरक्षित।",
+          },
           score: { t: "गतिशील ट्रस्ट स्कोर", d: "डिलीवरी, दोष दर, दोहराव और विवाद से लाइव स्कोर।" },
-          analytics: { t: "खरीद विश्लेषण", d: "मासिक खर्च, विक्रेता एकाग्रता, श्रेणी लागत — मापने योग्य।" },
-          credit: { t: "क्रेडिट ऑर्केस्ट्रेशन", d: "नेटवर्क पर भुगतान व्यवहार ट्रैक। NBFC साझेदारों से जुड़ें।" },
+          analytics: {
+            t: "खरीद विश्लेषण",
+            d: "मासिक खर्च, विक्रेता एकाग्रता, श्रेणी लागत — मापने योग्य।",
+          },
+          credit: {
+            t: "क्रेडिट ऑर्केस्ट्रेशन",
+            d: "नेटवर्क पर भुगतान व्यवहार ट्रैक। NBFC साझेदारों से जुड़ें।",
+          },
         },
       },
       workflow: {
@@ -375,7 +423,8 @@ export const resources = {
       },
       cta: {
         title: "खरीद को एक संरचना की तरह चलाएँ।",
-        subtitle: "SMEs के लिए ₹5,000/माह से प्लान। हर टियर में सत्यापन, एस्क्रो और विश्लेषण शामिल।",
+        subtitle:
+          "SMEs के लिए ₹5,000/माह से प्लान। हर टियर में सत्यापन, एस्क्रो और विश्लेषण शामिल।",
         bookDemo: "20-मिनट डेमो बुक करें",
         talkSales: "सेल्स से बात करें",
       },
@@ -395,19 +444,32 @@ export const resources = {
   },
   kn: {
     translation: {
-      nav: { platform: "ಪ್ಲಾಟ್‌ಫಾರ್ಮ್", workflow: "ವರ್ಕ್‌ಫ್ಲೋ", trust: "ಟ್ರಸ್ಟ್ ಲೇಯರ್", pricing: "ಬೆಲೆ", signIn: "ಸೈನ್ ಇನ್", requestDemo: "ಡೆಮೊ ವಿನಂತಿಸಿ" },
+      nav: {
+        platform: "ಪ್ಲಾಟ್‌ಫಾರ್ಮ್",
+        workflow: "ವರ್ಕ್‌ಫ್ಲೋ",
+        trust: "ಟ್ರಸ್ಟ್ ಲೇಯರ್",
+        pricing: "ಬೆಲೆ",
+        signIn: "ಸೈನ್ ಇನ್",
+        requestDemo: "ಡೆಮೊ ವಿನಂತಿಸಿ",
+      },
       hero: {
         badge: "ದೂರದೃಷ್ಟಿಯ ವ್ಯವಹಾರಗಳಿಗೆ ನಿರ್ಮಿಸಲಾಗಿದೆ.",
         title1: "ಸಂರಕ್ಷಿತ ಖರೀದಿ",
         title2: "ಆಧುನಿಕ ವ್ಯವಹಾರಗಳಿಗಾಗಿ.",
-        subtitle: "ಪರಿಶೀಲಿಸಿದ ಪೂರೈಕೆದಾರರು. ಎಸ್ಕ್ರೋ-ಬೆಂಬಲಿತ ವಹಿವಾಟುಗಳು. ಸಂಪೂರ್ಣ RFQ-ಯಿಂದ-ಪಾವತಿ ವರ್ಕ್‌ಫ್ಲೋ.",
+        subtitle:
+          "ಪರಿಶೀಲಿಸಿದ ಪೂರೈಕೆದಾರರು. ಎಸ್ಕ್ರೋ-ಬೆಂಬಲಿತ ವಹಿವಾಟುಗಳು. ಸಂಪೂರ್ಣ RFQ-ಯಿಂದ-ಪಾವತಿ ವರ್ಕ್‌ಫ್ಲೋ.",
         startSourcing: "ಸೋರ್ಸಿಂಗ್ ಪ್ರಾರಂಭಿಸಿ",
         listSupplier: "ಪೂರೈಕೆದಾರರಾಗಿ ಪಟ್ಟಿ ಮಾಡಿ",
         trust1: "GST + ಫ್ಯಾಕ್ಟರಿ ಪರಿಶೀಲಿತ",
         trust2: "ನಿಯಂತ್ರಿತ ಎಸ್ಕ್ರೋ ಪಾಲುದಾರ",
         trust3: "ಸಂಪೂರ್ಣ ಆಡಿಟ್ ಟ್ರೇಲ್",
       },
-      stats: { suppliers: "ಪರಿಶೀಲಿತ ಪೂರೈಕೆದಾರರು", processed: "ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಿದ ಖರೀದಿ", categories: "ಕೈಗಾರಿಕಾ ವರ್ಗಗಳು", onTime: "ಸಮಯಕ್ಕೆ GRN ಹೊಂದಾಣಿಕೆ" },
+      stats: {
+        suppliers: "ಪರಿಶೀಲಿತ ಪೂರೈಕೆದಾರರು",
+        processed: "ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಿದ ಖರೀದಿ",
+        categories: "ಕೈಗಾರಿಕಾ ವರ್ಗಗಳು",
+        onTime: "ಸಮಯಕ್ಕೆ GRN ಹೊಂದಾಣಿಕೆ",
+      },
       problem: {
         eyebrow: "ಇಂದಿನ ವಾಸ್ತವ",
         title: "ಭಾರತದಲ್ಲಿ ಕೈಗಾರಿಕಾ ಖರೀದಿ ಮುರಿದಿದೆ.",
@@ -426,7 +488,10 @@ export const resources = {
         title: "ಆರು ಮಾಡ್ಯೂಲ್‌ಗಳು. ಒಂದು ಖರೀದಿ ಬೆನ್ನೆಲುಬು.",
         subtitle: "ಖರೀದಿ-ಸ್ಥಳೀಯ. ಉತ್ಪಾದನಾ-ಕೇಂದ್ರಿತ. SME ಮತ್ತು ಮಧ್ಯಮ ಕಾರ್ಖಾನೆಗಳಿಗಾಗಿ.",
         items: {
-          verification: { t: "ಪೂರೈಕೆದಾರ ಪರಿಶೀಲನೆ", d: "GST, PAN, ಫ್ಯಾಕ್ಟರಿ ಮತ್ತು ವೀಡಿಯೊ ಪರಿಶೀಲನೆ." },
+          verification: {
+            t: "ಪೂರೈಕೆದಾರ ಪರಿಶೀಲನೆ",
+            d: "GST, PAN, ಫ್ಯಾಕ್ಟರಿ ಮತ್ತು ವೀಡಿಯೊ ಪರಿಶೀಲನೆ.",
+          },
           workflow: { t: "ಖರೀದಿ ವರ್ಕ್‌ಫ್ಲೋ", d: "PR → RFQ → ಕೋಟ್ → PO → GRN → ಪಾವತಿ." },
           escrow: { t: "ಸಂರಕ್ಷಿತ ವಹಿವಾಟು", d: "ನಿಯಂತ್ರಿತ ಎಸ್ಕ್ರೋ ಪಾಲುದಾರ. ಇಬ್ಬರೂ ಸಂರಕ್ಷಿತ." },
           score: { t: "ಡೈನಾಮಿಕ್ ಟ್ರಸ್ಟ್ ಸ್ಕೋರ್", d: "ಡೆಲಿವರಿ, ದೋಷ, ಪುನರಾವರ್ತನೆಯಿಂದ ನೇರ ಸ್ಕೋರ್." },
@@ -471,7 +536,16 @@ export const resources = {
       verticals: {
         eyebrow: "ವರ್ಟಿಕಲ್-ಮೊದಲ",
         title: "ಮುಖ್ಯ ವರ್ಗಗಳಲ್ಲಿ ಆಳವಾಗಿ ನಿರ್ಮಿಸಲಾಗಿದೆ.",
-        items: ["EV ಘಟಕಗಳು", "ಶೀಟ್ ಮೆಟಲ್", "ಫಾರ್ಮಾ ಪ್ಯಾಕೇಜಿಂಗ್", "CNC ಮೆಷಿನಿಂಗ್", "ಇಂಜೆಕ್ಷನ್ ಮೋಲ್ಡಿಂಗ್", "ಕೈಗಾರಿಕಾ ಯಂತ್ರೋಪಕರಣ", "ಆಟೋಮೋಟಿವ್ ಭಾಗಗಳು", "ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್ ಜೋಡಣೆ"],
+        items: [
+          "EV ಘಟಕಗಳು",
+          "ಶೀಟ್ ಮೆಟಲ್",
+          "ಫಾರ್ಮಾ ಪ್ಯಾಕೇಜಿಂಗ್",
+          "CNC ಮೆಷಿನಿಂಗ್",
+          "ಇಂಜೆಕ್ಷನ್ ಮೋಲ್ಡಿಂಗ್",
+          "ಕೈಗಾರಿಕಾ ಯಂತ್ರೋಪಕರಣ",
+          "ಆಟೋಮೋಟಿವ್ ಭಾಗಗಳು",
+          "ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್ ಜೋಡಣೆ",
+        ],
       },
       cta: {
         title: "ಖರೀದಿಯನ್ನು ಮೂಲಸೌಕರ್ಯದಂತೆ ನಡೆಸಿ.",
@@ -495,19 +569,32 @@ export const resources = {
   },
   ml: {
     translation: {
-      nav: { platform: "പ്ലാറ്റ്ഫോം", workflow: "വർക്ക്ഫ്ലോ", trust: "ട്രസ്റ്റ് ലെയർ", pricing: "വില", signIn: "സൈൻ ഇൻ", requestDemo: "ഡെമോ ആവശ്യപ്പെടുക" },
+      nav: {
+        platform: "പ്ലാറ്റ്ഫോം",
+        workflow: "വർക്ക്ഫ്ലോ",
+        trust: "ട്രസ്റ്റ് ലെയർ",
+        pricing: "വില",
+        signIn: "സൈൻ ഇൻ",
+        requestDemo: "ഡെമോ ആവശ്യപ്പെടുക",
+      },
       hero: {
         badge: "ദർശനമുള്ള ബിസിനസുകൾക്കായി നിർമ്മിച്ചത്.",
         title1: "സംരക്ഷിത സംഭരണം",
         title2: "ആധുനിക ബിസിനസുകൾക്കായി.",
-        subtitle: "പരിശോധിച്ച വിതരണക്കാർ. എസ്ക്രോ-പിന്തുണയുള്ള ഇടപാടുകൾ. പൂർണ്ണ RFQ-മുതൽ-പേയ്മെന്റ് വർക്ക്ഫ്ലോ.",
+        subtitle:
+          "പരിശോധിച്ച വിതരണക്കാർ. എസ്ക്രോ-പിന്തുണയുള്ള ഇടപാടുകൾ. പൂർണ്ണ RFQ-മുതൽ-പേയ്മെന്റ് വർക്ക്ഫ്ലോ.",
         startSourcing: "സോഴ്സിംഗ് ആരംഭിക്കുക",
         listSupplier: "വിതരണക്കാരനായി ലിസ്റ്റുചെയ്യുക",
         trust1: "GST + ഫാക്ടറി പരിശോധിച്ചത്",
         trust2: "നിയന്ത്രിത എസ്ക്രോ പങ്കാളി",
         trust3: "പൂർണ്ണ ഓഡിറ്റ് ട്രെയിൽ",
       },
-      stats: { suppliers: "പരിശോധിച്ച വിതരണക്കാർ", processed: "പ്രോസസ് ചെയ്ത സംഭരണം", categories: "വ്യാവസായിക വിഭാഗങ്ങൾ", onTime: "സമയത്ത് GRN മാച്ച്" },
+      stats: {
+        suppliers: "പരിശോധിച്ച വിതരണക്കാർ",
+        processed: "പ്രോസസ് ചെയ്ത സംഭരണം",
+        categories: "വ്യാവസായിക വിഭാഗങ്ങൾ",
+        onTime: "സമയത്ത് GRN മാച്ച്",
+      },
       problem: {
         eyebrow: "ഇന്നത്തെ യാഥാർത്ഥ്യം",
         title: "ഇന്ത്യയിലെ വ്യാവസായിക സംഭരണം തകർന്നിരിക്കുന്നു.",
@@ -571,7 +658,16 @@ export const resources = {
       verticals: {
         eyebrow: "വെർട്ടിക്കൽ-ആദ്യം",
         title: "പ്രധാന വിഭാഗങ്ങളിൽ ആഴത്തിൽ നിർമ്മിച്ചിരിക്കുന്നു.",
-        items: ["EV ഘടകങ്ങൾ", "ഷീറ്റ് മെറ്റൽ", "ഫാർമ പാക്കേജിംഗ്", "CNC മെഷീനിംഗ്", "ഇൻജക്ഷൻ മോൾഡിംഗ്", "വ്യാവസായിക യന്ത്രസാമഗ്രി", "ഓട്ടോമോട്ടീവ് ഭാഗങ്ങൾ", "ഇലക്ട്രോണിക്സ് അസംബ്ലി"],
+        items: [
+          "EV ഘടകങ്ങൾ",
+          "ഷീറ്റ് മെറ്റൽ",
+          "ഫാർമ പാക്കേജിംഗ്",
+          "CNC മെഷീനിംഗ്",
+          "ഇൻജക്ഷൻ മോൾഡിംഗ്",
+          "വ്യാവസായിക യന്ത്രസാമഗ്രി",
+          "ഓട്ടോമോട്ടീവ് ഭാഗങ്ങൾ",
+          "ഇലക്ട്രോണിക്സ് അസംബ്ലി",
+        ],
       },
       cta: {
         title: "സംഭരണം അടിസ്ഥാന സൗകര്യം പോലെ പ്രവർത്തിപ്പിക്കുക.",
@@ -595,19 +691,32 @@ export const resources = {
   },
   te: {
     translation: {
-      nav: { platform: "ప్లాట్‌ఫారమ్", workflow: "వర్క్‌ఫ్లో", trust: "ట్రస్ట్ లేయర్", pricing: "ధర", signIn: "సైన్ ఇన్", requestDemo: "డెమో అభ్యర్థించండి" },
+      nav: {
+        platform: "ప్లాట్‌ఫారమ్",
+        workflow: "వర్క్‌ఫ్లో",
+        trust: "ట్రస్ట్ లేయర్",
+        pricing: "ధర",
+        signIn: "సైన్ ఇన్",
+        requestDemo: "డెమో అభ్యర్థించండి",
+      },
       hero: {
         badge: "దృష్టి ఉన్న వ్యాపారాల కోసం నిర్మించబడింది.",
         title1: "రక్షిత సేకరణ",
         title2: "ఆధునిక వ్యాపారాల కోసం.",
-        subtitle: "ధృవీకరించబడిన సరఫరాదారులు. ఎస్క్రో-మద్దతు లావాదేవీలు. పూర్తి RFQ-నుండి-చెల్లింపు వర్క్‌ఫ్లో.",
+        subtitle:
+          "ధృవీకరించబడిన సరఫరాదారులు. ఎస్క్రో-మద్దతు లావాదేవీలు. పూర్తి RFQ-నుండి-చెల్లింపు వర్క్‌ఫ్లో.",
         startSourcing: "సోర్సింగ్ ప్రారంభించండి",
         listSupplier: "సరఫరాదారుగా జాబితా చేయండి",
         trust1: "GST + ఫ్యాక్టరీ ధృవీకరించబడింది",
         trust2: "నియంత్రిత ఎస్క్రో భాగస్వామి",
         trust3: "పూర్తి ఆడిట్ ట్రయల్",
       },
-      stats: { suppliers: "ధృవీకరించిన సరఫరాదారులు", processed: "ప్రాసెస్ చేసిన సేకరణ", categories: "పారిశ్రామిక వర్గాలు", onTime: "సమయానికి GRN సరిపోలిక" },
+      stats: {
+        suppliers: "ధృవీకరించిన సరఫరాదారులు",
+        processed: "ప్రాసెస్ చేసిన సేకరణ",
+        categories: "పారిశ్రామిక వర్గాలు",
+        onTime: "సమయానికి GRN సరిపోలిక",
+      },
       problem: {
         eyebrow: "నేటి వాస్తవికత",
         title: "భారతదేశంలో పారిశ్రామిక సేకరణ విచ్ఛిన్నమైంది.",
@@ -671,7 +780,16 @@ export const resources = {
       verticals: {
         eyebrow: "వర్టికల్-ఫస్ట్",
         title: "ముఖ్యమైన వర్గాలలో లోతుగా నిర్మించబడింది.",
-        items: ["EV భాగాలు", "షీట్ మెటల్", "ఫార్మా ప్యాకేజింగ్", "CNC మెషినింగ్", "ఇంజెక్షన్ మోల్డింగ్", "పారిశ్రామిక యంత్రాలు", "ఆటోమోటివ్ భాగాలు", "ఎలక్ట్రానిక్స్ అసెంబ్లీ"],
+        items: [
+          "EV భాగాలు",
+          "షీట్ మెటల్",
+          "ఫార్మా ప్యాకేజింగ్",
+          "CNC మెషినింగ్",
+          "ఇంజెక్షన్ మోల్డింగ్",
+          "పారిశ్రామిక యంత్రాలు",
+          "ఆటోమోటివ్ భాగాలు",
+          "ఎలక్ట్రానిక్స్ అసెంబ్లీ",
+        ],
       },
       cta: {
         title: "సేకరణను మౌలిక సదుపాయంలా నడపండి.",
@@ -695,19 +813,32 @@ export const resources = {
   },
   bn: {
     translation: {
-      nav: { platform: "প্ল্যাটফর্ম", workflow: "ওয়ার্কফ্লো", trust: "ট্রাস্ট লেয়ার", pricing: "মূল্য", signIn: "সাইন ইন", requestDemo: "ডেমো অনুরোধ" },
+      nav: {
+        platform: "প্ল্যাটফর্ম",
+        workflow: "ওয়ার্কফ্লো",
+        trust: "ট্রাস্ট লেয়ার",
+        pricing: "মূল্য",
+        signIn: "সাইন ইন",
+        requestDemo: "ডেমো অনুরোধ",
+      },
       hero: {
         badge: "দূরদৃষ্টিসম্পন্ন ব্যবসার জন্য নির্মিত।",
         title1: "সুরক্ষিত সংগ্রহ",
         title2: "আধুনিক ব্যবসার জন্য।",
-        subtitle: "যাচাইকৃত সরবরাহকারী। এসক্রো-সমর্থিত লেনদেন। সম্পূর্ণ RFQ থেকে পেমেন্ট ওয়ার্কফ্লো।",
+        subtitle:
+          "যাচাইকৃত সরবরাহকারী। এসক্রো-সমর্থিত লেনদেন। সম্পূর্ণ RFQ থেকে পেমেন্ট ওয়ার্কফ্লো।",
         startSourcing: "সোর্সিং শুরু করুন",
         listSupplier: "সরবরাহকারী হিসাবে তালিকাভুক্ত করুন",
         trust1: "GST + কারখানা যাচাইকৃত",
         trust2: "নিয়ন্ত্রিত এসক্রো অংশীদার",
         trust3: "সম্পূর্ণ অডিট ট্রেইল",
       },
-      stats: { suppliers: "যাচাইকৃত সরবরাহকারী", processed: "প্রক্রিয়াকৃত সংগ্রহ", categories: "শিল্প বিভাগ", onTime: "সময়মতো GRN মিল" },
+      stats: {
+        suppliers: "যাচাইকৃত সরবরাহকারী",
+        processed: "প্রক্রিয়াকৃত সংগ্রহ",
+        categories: "শিল্প বিভাগ",
+        onTime: "সময়মতো GRN মিল",
+      },
       problem: {
         eyebrow: "আজকের বাস্তবতা",
         title: "ভারতে শিল্প সংগ্রহ ভেঙে পড়েছে।",
@@ -771,7 +902,16 @@ export const resources = {
       verticals: {
         eyebrow: "ভার্টিকাল-প্রথম",
         title: "গুরুত্বপূর্ণ বিভাগে গভীরভাবে নির্মিত।",
-        items: ["EV উপাদান", "শীট মেটাল", "ফার্মা প্যাকেজিং", "CNC মেশিনিং", "ইনজেকশন মোল্ডিং", "শিল্প যন্ত্রপাতি", "অটোমোটিভ পার্টস", "ইলেকট্রনিক্স অ্যাসেম্বলি"],
+        items: [
+          "EV উপাদান",
+          "শীট মেটাল",
+          "ফার্মা প্যাকেজিং",
+          "CNC মেশিনিং",
+          "ইনজেকশন মোল্ডিং",
+          "শিল্প যন্ত্রপাতি",
+          "অটোমোটিভ পার্টস",
+          "ইলেকট্রনিক্স অ্যাসেম্বলি",
+        ],
       },
       cta: {
         title: "সংগ্রহকে অবকাঠামোর মতো চালান।",
@@ -795,7 +935,14 @@ export const resources = {
   },
   gu: {
     translation: {
-      nav: { platform: "પ્લેટફોર્મ", workflow: "વર્કફ્લો", trust: "ટ્રસ્ટ લેયર", pricing: "કિંમત", signIn: "સાઇન ઇન", requestDemo: "ડેમો વિનંતી" },
+      nav: {
+        platform: "પ્લેટફોર્મ",
+        workflow: "વર્કફ્લો",
+        trust: "ટ્રસ્ટ લેયર",
+        pricing: "કિંમત",
+        signIn: "સાઇન ઇન",
+        requestDemo: "ડેમો વિનંતી",
+      },
       hero: {
         badge: "દૂરદર્શી વ્યવસાયો માટે બનાવેલ.",
         title1: "સુરક્ષિત પ્રાપ્તિ",
@@ -807,7 +954,12 @@ export const resources = {
         trust2: "નિયંત્રિત એસ્ક્રો ભાગીદાર",
         trust3: "સંપૂર્ણ ઓડિટ ટ્રેઇલ",
       },
-      stats: { suppliers: "ચકાસાયેલ સપ્લાયર્સ", processed: "પ્રક્રિયા થયેલ પ્રાપ્તિ", categories: "ઔદ્યોગિક શ્રેણીઓ", onTime: "સમયસર GRN મેચ" },
+      stats: {
+        suppliers: "ચકાસાયેલ સપ્લાયર્સ",
+        processed: "પ્રક્રિયા થયેલ પ્રાપ્તિ",
+        categories: "ઔદ્યોગિક શ્રેણીઓ",
+        onTime: "સમયસર GRN મેચ",
+      },
       problem: {
         eyebrow: "આજની વાસ્તવિકતા",
         title: "ભારતમાં ઔદ્યોગિક પ્રાપ્તિ તૂટેલી છે.",
@@ -871,7 +1023,16 @@ export const resources = {
       verticals: {
         eyebrow: "વર્ટિકલ-પ્રથમ",
         title: "મહત્વપૂર્ણ શ્રેણીઓમાં ઊંડે બનેલ.",
-        items: ["EV ઘટકો", "શીટ મેટલ", "ફાર્મા પેકેજિંગ", "CNC મશીનિંગ", "ઇન્જેક્શન મોલ્ડિંગ", "ઔદ્યોગિક મશીનરી", "ઓટોમોટિવ ભાગો", "ઇલેક્ટ્રોનિક્સ એસેમ્બલી"],
+        items: [
+          "EV ઘટકો",
+          "શીટ મેટલ",
+          "ફાર્મા પેકેજિંગ",
+          "CNC મશીનિંગ",
+          "ઇન્જેક્શન મોલ્ડિંગ",
+          "ઔદ્યોગિક મશીનરી",
+          "ઓટોમોટિવ ભાગો",
+          "ઇલેક્ટ્રોનિક્સ એસેમ્બલી",
+        ],
       },
       cta: {
         title: "પ્રાપ્તિને માળખા તરીકે ચલાવો.",
@@ -895,7 +1056,14 @@ export const resources = {
   },
   ur: {
     translation: {
-      nav: { platform: "پلیٹ فارم", workflow: "ورک فلو", trust: "ٹرسٹ لیئر", pricing: "قیمت", signIn: "سائن ان", requestDemo: "ڈیمو کی درخواست" },
+      nav: {
+        platform: "پلیٹ فارم",
+        workflow: "ورک فلو",
+        trust: "ٹرسٹ لیئر",
+        pricing: "قیمت",
+        signIn: "سائن ان",
+        requestDemo: "ڈیمو کی درخواست",
+      },
       hero: {
         badge: "وژن والے کاروبار کے لیے بنایا گیا۔",
         title1: "محفوظ خریداری",
@@ -907,7 +1075,12 @@ export const resources = {
         trust2: "منظم ایسکرو پارٹنر",
         trust3: "مکمل آڈٹ ٹریل",
       },
-      stats: { suppliers: "تصدیق شدہ سپلائرز", processed: "پروسیس شدہ خریداری", categories: "صنعتی زمرے", onTime: "بروقت GRN میچ" },
+      stats: {
+        suppliers: "تصدیق شدہ سپلائرز",
+        processed: "پروسیس شدہ خریداری",
+        categories: "صنعتی زمرے",
+        onTime: "بروقت GRN میچ",
+      },
       problem: {
         eyebrow: "آج کی حقیقت",
         title: "بھارت میں صنعتی خریداری ٹوٹ چکی ہے۔",
@@ -971,7 +1144,16 @@ export const resources = {
       verticals: {
         eyebrow: "ورٹیکل-اول",
         title: "اہم زمروں میں گہرائی سے بنایا گیا۔",
-        items: ["EV اجزاء", "شیٹ میٹل", "فارما پیکیجنگ", "CNC مشیننگ", "انجیکشن مولڈنگ", "صنعتی مشینری", "آٹوموٹو پارٹس", "الیکٹرانکس اسمبلی"],
+        items: [
+          "EV اجزاء",
+          "شیٹ میٹل",
+          "فارما پیکیجنگ",
+          "CNC مشیننگ",
+          "انجیکشن مولڈنگ",
+          "صنعتی مشینری",
+          "آٹوموٹو پارٹس",
+          "الیکٹرانکس اسمبلی",
+        ],
       },
       cta: {
         title: "خریداری کو انفراسٹرکچر کی طرح چلائیں۔",

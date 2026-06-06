@@ -54,6 +54,25 @@ function LoginPage() {
     }
   }, [company, loading, navigate, user]);
 
+  async function doesProfileExist(
+    identifier: { type: "email"; value: string } | { type: "phone"; value: string },
+  ) {
+    const supabase = getSupabaseBrowserClient();
+
+    const { data, error: lookupError } = await supabase.rpc("login_identifier_exists", {
+      p_identifier_type: identifier.type,
+      p_identifier_value: identifier.value,
+    });
+
+    if (lookupError) {
+      throw new Error(
+        "Login account lookup is not configured in Supabase. Run docs/supabase/login-identifier-lookup.sql.",
+      );
+    }
+
+    return data === true;
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitting(true);
@@ -81,6 +100,18 @@ function LoginPage() {
           accountMethod === "email"
             ? t("authPages.signup.invalidEmail")
             : t("authPages.login.invalidIdentifier"),
+        );
+        shouldClearStage = true;
+        return;
+      }
+
+      const profileExists = await doesProfileExist(parsedIdentifier);
+
+      if (!profileExists) {
+        setError(
+          parsedIdentifier.type === "email"
+            ? t("authPages.login.emailNotFound")
+            : t("authPages.login.phoneNotFound"),
         );
         shouldClearStage = true;
         return;
@@ -117,7 +148,7 @@ function LoginPage() {
       });
 
       if (signInError) {
-        setError(signInError.message);
+        setError(t("authPages.login.wrongPassword"));
         shouldClearStage = true;
         return;
       }

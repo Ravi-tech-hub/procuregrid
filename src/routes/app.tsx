@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Building2, LoaderCircle, LogOut, ShieldCheck, UserRound } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LoaderCircle } from "lucide-react";
+import { AppWorkspaceShell } from "@/components/app/AppWorkspaceShell";
+import { BuyerWorkspace } from "@/components/app/BuyerWorkspace";
+import { SupplierWorkspace } from "@/components/app/SupplierWorkspace";
+import type { WorkspaceMode } from "@/components/app/workspace-data";
 import { useAuth } from "@/lib/auth";
-import { getUserPrimaryIdentifier } from "@/lib/auth-identifiers";
 
 export const Route = createFileRoute("/app")({
   component: AppHomePage,
 });
 
 function AppHomePage() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, membership, company, loading, signOut } = useAuth();
-  const [signingOut, setSigningOut] = useState(false);
-  const primaryIdentifier = getUserPrimaryIdentifier(user ?? {});
+  const { user, company, loading } = useAuth();
+  const initialMode: WorkspaceMode = company?.company_type === "supplier" ? "supplier" : "buyer";
+  const [mode, setMode] = useState<WorkspaceMode>(initialMode);
+  const [activeSection, setActiveSection] = useState("dashboard");
+  const displayName =
+    user?.user_metadata.full_name || user?.email?.split("@")[0] || user?.phone || "Account";
 
   useEffect(() => {
     if (loading) return;
@@ -29,84 +31,48 @@ function AppHomePage() {
     }
   }, [company, loading, navigate, user]);
 
-  async function handleSignOut() {
-    setSigningOut(true);
-    await signOut();
-    setSigningOut(false);
-    navigate({ to: "/login", replace: true });
+  useEffect(() => {
+    if (!company) return;
+    setMode(company.company_type === "supplier" ? "supplier" : "buyer");
+    setActiveSection("dashboard");
+  }, [company]);
+
+  function handleModeChange(nextMode: WorkspaceMode) {
+    setMode(nextMode);
+    setActiveSection("dashboard");
   }
 
-  if (loading) {
+  if (loading || !user || !company) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <LoaderCircle className="h-6 w-6 animate-spin text-primary" />
+      <div className="flex min-h-screen items-center justify-center bg-[#f4f7fb]">
+        <div className="flex items-center gap-3 rounded-xl border border-[#dfe6ef] bg-white px-5 py-4 text-sm text-[#65758a] shadow-sm">
+          <LoaderCircle className="h-5 w-5 animate-spin text-[#1d5b91]" />
+          Preparing your workspace...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-[0.25em] text-primary-glow">{t("appShell.sprintLabel")}</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight">{t("appShell.title")}</h1>
-            <p className="mt-2 max-w-2xl text-muted-foreground">
-              {t("appShell.description")}
-            </p>
-          </div>
-
-          <Button variant="outline" onClick={handleSignOut}>
-            {signingOut ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
-            {t("common.signOut")}
-          </Button>
-        </div>
-
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Building2 className="h-4 w-4 text-primary" />
-                {t("appShell.companyCardTitle")}
-              </CardTitle>
-              <CardDescription>{t("appShell.companyCardDescription")}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <p><span className="font-medium">{t("appShell.companyNameLabel")}:</span> {company?.name ?? t("common.notSet")}</p>
-              <p><span className="font-medium">{t("appShell.companyTypeLabel")}:</span> {company?.company_type ?? t("common.notSet")}</p>
-              <p><span className="font-medium">{t("appShell.companyIndustryLabel")}:</span> {company?.industry_category ?? t("common.notSet")}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <UserRound className="h-4 w-4 text-primary" />
-                {t("appShell.userCardTitle")}
-              </CardTitle>
-              <CardDescription>{t("appShell.userCardDescription")}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <p><span className="font-medium">{t("appShell.userIdentifierLabel")}:</span> {primaryIdentifier ?? t("common.unknown")}</p>
-              <p><span className="font-medium">{t("appShell.userIdLabel")}:</span> {user?.id ?? t("common.unknown")}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <ShieldCheck className="h-4 w-4 text-primary" />
-                {t("appShell.accessCardTitle")}
-              </CardTitle>
-              <CardDescription>{t("appShell.accessCardDescription")}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <p><span className="font-medium">{t("appShell.accessRoleLabel")}:</span> {membership?.role ?? t("common.notSet")}</p>
-              <p><span className="font-medium">{t("appShell.accessMembershipLabel")}:</span> {membership?.status ?? t("common.notSet")}</p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+    <AppWorkspaceShell
+      mode={mode}
+      activeSection={activeSection}
+      onSectionChange={setActiveSection}
+      onModeChange={company.company_type === "hybrid" ? handleModeChange : undefined}
+    >
+      {mode === "buyer" ? (
+        <BuyerWorkspace
+          activeSection={activeSection}
+          onSectionChange={setActiveSection}
+          displayName={displayName}
+        />
+      ) : (
+        <SupplierWorkspace
+          activeSection={activeSection}
+          onSectionChange={setActiveSection}
+          displayName={displayName}
+        />
+      )}
+    </AppWorkspaceShell>
   );
 }

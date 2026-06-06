@@ -10,7 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyPhoneRouteImport } from './routes/verify-phone'
+import { Route as StatisticsRouteImport } from './routes/statistics'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as PreferencesRouteImport } from './routes/preferences'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
@@ -21,9 +24,24 @@ const VerifyPhoneRoute = VerifyPhoneRouteImport.update({
   path: '/verify-phone',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StatisticsRoute = StatisticsRouteImport.update({
+  id: '/statistics',
+  path: '/statistics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreferencesRoute = PreferencesRouteImport.update({
+  id: '/preferences',
+  path: '/preferences',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -51,7 +69,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/login': typeof LoginRoute
+  '/preferences': typeof PreferencesRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
+  '/statistics': typeof StatisticsRoute
   '/verify-phone': typeof VerifyPhoneRoute
   '/onboarding/company': typeof OnboardingCompanyRoute
 }
@@ -59,7 +80,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/login': typeof LoginRoute
+  '/preferences': typeof PreferencesRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
+  '/statistics': typeof StatisticsRoute
   '/verify-phone': typeof VerifyPhoneRoute
   '/onboarding/company': typeof OnboardingCompanyRoute
 }
@@ -68,7 +92,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/login': typeof LoginRoute
+  '/preferences': typeof PreferencesRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
+  '/statistics': typeof StatisticsRoute
   '/verify-phone': typeof VerifyPhoneRoute
   '/onboarding/company': typeof OnboardingCompanyRoute
 }
@@ -78,7 +105,10 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
+    | '/preferences'
+    | '/settings'
     | '/signup'
+    | '/statistics'
     | '/verify-phone'
     | '/onboarding/company'
   fileRoutesByTo: FileRoutesByTo
@@ -86,7 +116,10 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
+    | '/preferences'
+    | '/settings'
     | '/signup'
+    | '/statistics'
     | '/verify-phone'
     | '/onboarding/company'
   id:
@@ -94,7 +127,10 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
+    | '/preferences'
+    | '/settings'
     | '/signup'
+    | '/statistics'
     | '/verify-phone'
     | '/onboarding/company'
   fileRoutesById: FileRoutesById
@@ -103,7 +139,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
   LoginRoute: typeof LoginRoute
+  PreferencesRoute: typeof PreferencesRoute
+  SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
+  StatisticsRoute: typeof StatisticsRoute
   VerifyPhoneRoute: typeof VerifyPhoneRoute
   OnboardingCompanyRoute: typeof OnboardingCompanyRoute
 }
@@ -117,11 +156,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyPhoneRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/statistics': {
+      id: '/statistics'
+      path: '/statistics'
+      fullPath: '/statistics'
+      preLoaderRoute: typeof StatisticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preferences': {
+      id: '/preferences'
+      path: '/preferences'
+      fullPath: '/preferences'
+      preLoaderRoute: typeof PreferencesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -159,7 +219,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
   LoginRoute: LoginRoute,
+  PreferencesRoute: PreferencesRoute,
+  SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
+  StatisticsRoute: StatisticsRoute,
   VerifyPhoneRoute: VerifyPhoneRoute,
   OnboardingCompanyRoute: OnboardingCompanyRoute,
 }

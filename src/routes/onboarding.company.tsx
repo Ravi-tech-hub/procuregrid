@@ -64,6 +64,23 @@ function CompanyOnboardingPage() {
     }
   }, [company, loading, navigate, user]);
 
+  async function createCompanyViaRpc() {
+    const supabase = getSupabaseBrowserClient();
+    const { error } = await withTimeout(
+      supabase.rpc("create_company_with_owner", {
+        p_name: name,
+        p_company_type: companyType,
+        p_industry_category: industryCategory || null,
+        p_gst_number: gstNumber || null,
+        p_pan_number: panNumber || null,
+      }),
+      15000,
+      "Company creation timed out after 15 seconds.",
+    );
+
+    return { error };
+  }
+
   async function handleSignOut() {
     setSigningOut(true);
     await signOut();
@@ -86,42 +103,25 @@ function CompanyOnboardingPage() {
 
     try {
       setSubmitStage(t("authPages.onboarding.stageConnecting"));
-      const supabase = getSupabaseBrowserClient();
       setSubmitStage(t("authPages.onboarding.stageCreating"));
-      const companyId = crypto.randomUUID();
+      const creationResult = await createCompanyViaRpc();
 
-      const { error: companyError } = await withTimeout(
-        supabase.from("companies").insert({
-          id: companyId,
-          name,
-          company_type: companyType,
-          gst_number: gstNumber || null,
-          pan_number: panNumber || null,
-          industry_category: industryCategory || null,
-        }),
-        15000,
-        "Company insert timed out after 15 seconds.",
-      );
-
-      if (companyError) {
-        setError(`Company creation failed: ${companyError.message}`);
-        shouldClearStage = true;
-        return;
-      }
-
-      const { error: membershipError } = await withTimeout(
-        supabase.from("company_memberships").insert({
-          company_id: companyId,
-          user_id: user.id,
-          role: "company_admin",
-          status: "active",
-        }),
-        15000,
-        "Membership insert timed out after 15 seconds.",
-      );
-
-      if (membershipError) {
-        setError(`Membership creation failed: ${membershipError.message}`);
+      if (creationResult.error) {
+        if (
+          creationResult.error.message?.includes(
+            "Could not find the function public.create_company_with_owner",
+          )
+        ) {
+          setError(
+            "Company creation is not configured in Supabase. Create the public.create_company_with_owner(...) RPC first.",
+          );
+        } else if (creationResult.error.message?.includes("company_memberships_role_check")) {
+          setError(
+            "Company creation failed because the Supabase membership roles are outdated. Run docs/supabase/fix-membership-role-constraint.sql in the Supabase SQL Editor, then try again.",
+          );
+        } else {
+          setError(`Company creation failed: ${creationResult.error.message}`);
+        }
         shouldClearStage = true;
         return;
       }
@@ -147,7 +147,9 @@ function CompanyOnboardingPage() {
       <div className="flex min-h-screen items-center justify-center bg-[image:var(--gradient-subtle)]">
         <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-white/80 px-5 py-4 shadow-[var(--shadow-md)] backdrop-blur">
           <LoaderCircle className="h-5 w-5 animate-spin text-primary" />
-          <span className="text-sm text-muted-foreground">{t("authPages.onboarding.checkingWorkspace")}</span>
+          <span className="text-sm text-muted-foreground">
+            {t("authPages.onboarding.checkingWorkspace")}
+          </span>
         </div>
       </div>
     );
@@ -173,9 +175,7 @@ function CompanyOnboardingPage() {
               <h1 className="mt-6 text-4xl font-bold leading-tight">
                 {t("authPages.onboarding.heroTitle")}
               </h1>
-              <p className="mt-4 text-lg text-white/75">
-                {t("authPages.onboarding.heroSubtitle")}
-              </p>
+              <p className="mt-4 text-lg text-white/75">{t("authPages.onboarding.heroSubtitle")}</p>
             </div>
           </div>
         </div>
@@ -196,7 +196,11 @@ function CompanyOnboardingPage() {
             <CardContent>
               <div className="mb-6 flex justify-end">
                 <Button variant="outline" onClick={handleSignOut} type="button">
-                  {signingOut ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
+                  {signingOut ? (
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <LogOut className="h-4 w-4" />
+                  )}
                   {t("common.signOut")}
                 </Button>
               </div>
@@ -216,15 +220,26 @@ function CompanyOnboardingPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("authPages.onboarding.companyTypeLabel")}</label>
-                  <Select value={companyType} onValueChange={(value) => setCompanyType(value as typeof companyType)}>
+                  <label className="text-sm font-medium">
+                    {t("authPages.onboarding.companyTypeLabel")}
+                  </label>
+                  <Select
+                    value={companyType}
+                    onValueChange={(value) => setCompanyType(value as typeof companyType)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={t("authPages.onboarding.companyTypePlaceholder")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="buyer">{t("authPages.onboarding.companyTypeBuyer")}</SelectItem>
-                      <SelectItem value="supplier">{t("authPages.onboarding.companyTypeSupplier")}</SelectItem>
-                      <SelectItem value="hybrid">{t("authPages.onboarding.companyTypeHybrid")}</SelectItem>
+                      <SelectItem value="buyer">
+                        {t("authPages.onboarding.companyTypeBuyer")}
+                      </SelectItem>
+                      <SelectItem value="supplier">
+                        {t("authPages.onboarding.companyTypeSupplier")}
+                      </SelectItem>
+                      <SelectItem value="hybrid">
+                        {t("authPages.onboarding.companyTypeHybrid")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -275,7 +290,11 @@ function CompanyOnboardingPage() {
 
                 <div className="md:col-span-2">
                   <Button className="w-full md:w-auto" disabled={!canSubmit} type="submit">
-                    {submitting ? <LoaderCircle className="h-4 w-4 animate-spin" /> : t("authPages.onboarding.submit")}
+                    {submitting ? (
+                      <LoaderCircle className="h-4 w-4 animate-spin" />
+                    ) : (
+                      t("authPages.onboarding.submit")
+                    )}
                   </Button>
                 </div>
               </form>

@@ -15,7 +15,7 @@ type MembershipRecord = {
   id: string;
   company_id: string;
   user_id: string;
-  role: "company_admin" | "buyer_procurement" | "supplier_admin";
+  role: "company_admin" | "buyer_procurement" | "buyer_finance" | "supplier_operator";
   status: "invited" | "active" | "disabled";
   company: CompanyRecord | CompanyRecord[] | null;
 };
@@ -41,7 +41,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 function normalizeCompany(company: MembershipRecord["company"]): CompanyRecord | null {
   if (!company) return null;
-  return Array.isArray(company) ? company[0] ?? null : company;
+  return Array.isArray(company) ? (company[0] ?? null) : company;
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number, message: string) {
@@ -76,11 +76,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data, error } = await withTimeout(
       supabase
-      .from("company_memberships")
-      .select("id, company_id, user_id, role, status")
-      .eq("user_id", nextUser.id)
-      .eq("status", "active")
-      .limit(1),
+        .from("company_memberships")
+        .select("id, company_id, user_id, role, status")
+        .eq("user_id", nextUser.id)
+        .eq("status", "active")
+        .limit(1),
       10000,
       "Membership lookup timed out.",
     );
@@ -97,7 +97,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       "Company lookup timed out.",
     );
 
-    const nextCompany = companyError || !companyData?.length ? null : (companyData[0] as CompanyRecord);
+    const nextCompany =
+      companyError || !companyData?.length ? null : (companyData[0] as CompanyRecord);
     return { membership: nextMembership, company: nextCompany };
   }
 
