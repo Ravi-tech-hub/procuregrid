@@ -13,10 +13,10 @@ This folder turns those deliverables into repo-native artifacts that the team ca
 
 ## Files
 
-- [product-requirements.md](/Users/adityaamitbansal/Downloads/procuregrid/docs/sprint-0/product-requirements.md)
-- [wireframes.md](/Users/adityaamitbansal/Downloads/procuregrid/docs/sprint-0/wireframes.md)
-- [architecture.md](/Users/adityaamitbansal/Downloads/procuregrid/docs/sprint-0/architecture.md)
-- [data-model.md](/Users/adityaamitbansal/Downloads/procuregrid/docs/sprint-0/data-model.md)
+- [product-requirements.md](product-requirements.md)
+- [wireframes.md](wireframes.md)
+- [architecture.md](architecture.md)
+- [data-model.md](data-model.md)
 
 ## Working Assumptions
 

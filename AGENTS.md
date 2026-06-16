@@ -58,15 +58,15 @@ Before changing code, inspect the project:
 ```bash
 pwd
 find . -maxdepth 2 -type f | sort | sed -n '1,200p'
-cat package.json
+cat frontend/package.json
 ```
 
 Check configuration when present:
 
 ```bash
-cat tsconfig.json 2>/dev/null || true
-cat vite.config.ts 2>/dev/null || true
-cat eslint.config.* 2>/dev/null || true
+cat frontend/tsconfig.json 2>/dev/null || true
+cat frontend/vite.config.ts 2>/dev/null || true
+cat frontend/eslint.config.* 2>/dev/null || true
 cat .prettierrc* 2>/dev/null || true
 ```
 
@@ -85,7 +85,7 @@ Commands below assume npm. Replace them only when the repository uses another pa
 ### Install dependencies
 
 ```bash
-npm ci
+cd frontend && npm ci
 ```
 
 Use `npm install` only when deliberately changing dependencies or when no lockfile exists.
@@ -93,7 +93,7 @@ Use `npm install` only when deliberately changing dependencies or when no lockfi
 ### Configure environment
 
 ```bash
-cp .env.example .env.local
+cp .env.example frontend/.env.local
 ```
 
 Never commit secrets. Never expose service-role keys in browser code.
@@ -129,19 +129,19 @@ npx supabase migration new descriptive_name
 Regenerate database types after schema changes, using the repository's existing output path:
 
 ```bash
-npx supabase gen types typescript --local > src/types/database.types.ts
+npx supabase gen types typescript --local > frontend/src/types/database.types.ts
 ```
 
 Never run destructive remote database commands unless the task explicitly requires it and the target environment is confirmed.
 
 ## Development Commands
 
-Inspect `package.json` and use its scripts. Common commands are:
+Inspect `frontend/package.json` and run its scripts from `frontend/`. Common commands are:
 
 ```bash
+cd frontend
 npm run dev
 npm run build
-npm run start
 npm run lint
 npm run typecheck
 npm test

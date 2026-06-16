@@ -1,46 +1,54 @@
 # ProcureGrid
 
-ProcureGrid is a protected procurement platform for Indian manufacturers and industrial SMEs. The product combines a verified supplier network, procurement workflow tooling, transaction protection, and trust data into a single operating layer.
+ProcureGrid is a protected B2B procurement platform for Indian manufacturers and industrial SMEs.
+The MVP focuses on secure company onboarding and the RFQ-to-quotation workflow for buyers,
+suppliers, and platform administrators.
 
-This repository currently contains the web application foundation for the platform website and early product planning assets.
+## Repository Structure
 
-## Sprint 0
+```text
+ProcureGrid/
+├── frontend/     # TanStack Start web application
+├── backend/      # Backend boundary and future server modules
+├── database/     # Supabase/Postgres SQL and migrations
+├── docs/         # Product, architecture, and sprint documentation
+├── tests/        # Cross-application integration and end-to-end tests
+├── README.md
+├── .env.example
+├── CONTRIBUTING.md
+└── ROADMAP.md
+```
 
-Sprint 0 artifacts live in [docs/sprint-0/README.md](/Users/adityaamitbansal/Downloads/procuregrid/docs/sprint-0/README.md).
+The current executable application lives in `frontend/`. Supabase provides authentication and the
+database; no separate backend service has been introduced yet.
 
-The current Sprint 0 package includes:
+## Local Development
 
-- Product requirements
-- Low-fidelity wireframes
-- Initial application architecture
-- Core data model
+Use Node.js 22.
 
-## Product Positioning
+```bash
+cp .env.example frontend/.env.local
+cd frontend
+npm ci
+npm run dev
+```
 
-ProcureGrid should be positioned as:
+Available frontend checks:
 
-- Protected procurement infrastructure for manufacturers
-- A procurement operating system plus supplier trust layer
-- A workflow-first platform, not a generic marketplace or full ERP
+```bash
+cd frontend
+npm run lint
+npm run typecheck
+npm run build
+```
 
-## MVP Guardrails
+For Cloudflare or another deployment provider, configure `frontend/` as the project root so it can
+find `package.json`, `vite.config.ts`, and `wrangler.jsonc`.
 
-Early product work should stay focused on:
+## Project Guidance
 
-- Supplier onboarding, approval, and verification
-- Buyer RFQ creation and admin review
-- Approved supplier assignment
-- Supplier quotation submission
-- Buyer quotation comparison and selection
-- Role-based access, auditability, and tenant isolation
-
-Avoid in the MVP:
-
-- Full ERP breadth
-- Accounting, inventory, logistics, payments, escrow, or credit workflows
-- Premature microservice complexity
-- Lending functionality
-- Automated GST verification
-- AI supplier matching or quotation scoring
-- Public supplier marketplace search
-- Heavy AI scope before workflow correctness
+- Read [CONTRIBUTING.md](CONTRIBUTING.md) before making changes.
+- See [ROADMAP.md](ROADMAP.md) for the delivery sequence.
+- See [docs/project-context.md](docs/project-context.md) for product and architecture context.
+- Apply database scripts from [database/](database/) through the Supabase SQL Editor only after
+  reviewing the target environment.
