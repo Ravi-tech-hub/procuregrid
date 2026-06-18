@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Check, Circle, Factory, LoaderCircle, ShieldCheck } from "lucide-react";
+import { Check, Circle, Eye, EyeOff, Factory, LoaderCircle, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,11 +43,15 @@ function SignupPage() {
   const [fullName, setFullName] = useState("");
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const selectedPhoneCountry = getPhoneCountry(phoneCountry);
   const passwordRequirements = getPasswordRequirements(password);
   const passwordIsValid = isPasswordValid(password);
+  const passwordsMatch = password === confirmPassword;
   const parsedSignupIdentifier =
     accountMethod === "email"
       ? parseIdentifierByType("email", identifier)
@@ -57,7 +61,8 @@ function SignupPage() {
         })();
   const canSubmit =
     fullName.trim().length > 0 &&
-    (accountMethod === "phone" || passwordIsValid) &&
+    (accountMethod === "phone" ||
+      (passwordIsValid && passwordsMatch && confirmPassword.length > 0)) &&
     !submitting &&
     parsedSignupIdentifier !== null;
 
@@ -101,6 +106,12 @@ function SignupPage() {
 
     if (parsedIdentifier.type === "email" && !passwordIsValid) {
       setError(t("authPages.signup.passwordPolicyError"));
+      setSubmitting(false);
+      return;
+    }
+
+    if (parsedIdentifier.type === "email" && !passwordsMatch) {
+      setError(t("authPages.signup.confirmPasswordError"));
       setSubmitting(false);
       return;
     }
@@ -284,19 +295,66 @@ function SignupPage() {
                     <label className="text-sm font-medium" htmlFor="password">
                       {t("authPages.signup.passwordLabel")}
                     </label>
-                    <Input
-                      id="password"
-                      type="password"
-                      autoComplete="new-password"
-                      minLength={PASSWORD_MIN_LENGTH}
-                      maxLength={PASSWORD_MAX_LENGTH}
-                      placeholder={t("authPages.signup.passwordPlaceholder")}
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
-                      aria-describedby="password-requirements"
-                      aria-invalid={password.length > 0 && !passwordIsValid}
-                      required
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        minLength={PASSWORD_MIN_LENGTH}
+                        maxLength={PASSWORD_MAX_LENGTH}
+                        placeholder={t("authPages.signup.passwordPlaceholder")}
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                        aria-describedby="password-requirements"
+                        aria-invalid={password.length > 0 && !passwordIsValid}
+                        className="pr-12"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((current) => !current)}
+                        className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                    <label className="text-sm font-medium" htmlFor="confirmPassword">
+                      {t("authPages.signup.confirmPasswordLabel")}
+                    </label>
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        minLength={PASSWORD_MIN_LENGTH}
+                        maxLength={PASSWORD_MAX_LENGTH}
+                        placeholder={t("authPages.signup.confirmPasswordPlaceholder")}
+                        value={confirmPassword}
+                        onChange={(event) => setConfirmPassword(event.target.value)}
+                        aria-invalid={confirmPassword.length > 0 && !passwordsMatch}
+                        className="pr-12"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword((current) => !current)}
+                        className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+                        aria-label={
+                          showConfirmPassword ? "Hide confirm password" : "Show confirm password"
+                        }
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                     <div
                       id="password-requirements"
                       className="rounded-lg border border-border bg-muted/35 p-3"
@@ -322,6 +380,20 @@ function SignupPage() {
                             </li>
                           );
                         })}
+                        <li
+                          className={
+                            confirmPassword.length > 0 && passwordsMatch
+                              ? "flex items-center gap-2 text-xs text-emerald-700"
+                              : "flex items-center gap-2 text-xs text-muted-foreground"
+                          }
+                        >
+                          {confirmPassword.length > 0 && passwordsMatch ? (
+                            <Check className="h-3.5 w-3.5 shrink-0" />
+                          ) : (
+                            <Circle className="h-3.5 w-3.5 shrink-0" />
+                          )}
+                          {t("authPages.signup.confirmPasswordLabel")}
+                        </li>
                       </ul>
                     </div>
                   </div>
