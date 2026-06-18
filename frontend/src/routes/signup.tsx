@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth";
+import { beginEmailAuth } from "@/lib/email-auth";
 import {
   buildE164PhoneNumber,
   parseIdentifierByType,
@@ -21,7 +22,6 @@ import {
 } from "@/lib/auth-identifiers";
 import { beginPhoneAuth } from "@/lib/phone-auth";
 import { defaultPhoneCountry, getPhoneCountry, phoneCountries } from "@/lib/phone-countries";
-import { upsertProfileForUser } from "@/lib/profile-sync";
 import {
   getPasswordRequirements,
   isPasswordValid,
@@ -133,46 +133,29 @@ function SignupPage() {
       return;
     }
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
+    const { error: beginEmailAuthError } = await beginEmailAuth({
+      supabase,
       email: parsedIdentifier.value,
+      fullName,
       password,
-      options: {
-        data: {
-          full_name: fullName,
-        },
-      },
+      mode: "signup",
     });
 
-    if (signUpError) {
-      setError(signUpError.message);
+    if (beginEmailAuthError) {
+      setError(beginEmailAuthError.message);
       setSubmitting(false);
       return;
     }
 
-    const nextUser = data.user;
-    if (nextUser && data.session) {
-      const { error: profileError } = await upsertProfileForUser(nextUser, {
-        fullName,
-        authIdentifierType: "email",
-        contactEmail: parsedIdentifier.value,
-        contactPhoneE164: null,
-      });
-
-      if (profileError) {
-        setError(profileError.message);
-        setSubmitting(false);
-        return;
-      }
-    }
-
     setSubmitting(false);
-
-    if (!data.session) {
-      setError(t("authPages.signup.checkEmailNotice"));
-      return;
-    }
-
-    navigate({ to: "/onboarding/company", replace: true });
+    navigate({
+      to: "/verify-email",
+      search: {
+        email: parsedIdentifier.value,
+        mode: "signup",
+      },
+      replace: true,
+    });
   }
 
   return (

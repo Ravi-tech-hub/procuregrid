@@ -275,6 +275,17 @@ export const en = {
         invalidCode: "Enter the 6-digit code sent to your phone.",
         stageVerifying: "Verifying your phone number...",
       },
+      verifyEmail: {
+        title: "Verify your email address",
+        description: "Enter the one-time password sent to your email address to continue securely.",
+        codeLabel: "Verification code",
+        codePlaceholder: "6-digit code",
+        submit: "Verify email",
+        backToSignup: "Back to signup",
+        backToLogin: "Back to sign in",
+        missingEmail: "Missing email address. Start again from sign in or account creation.",
+        invalidCode: "Enter the 6-digit code sent to your email.",
+      },
     },
     appShell: {
       sprintLabel: "Sprint 1",

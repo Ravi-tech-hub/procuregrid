@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyPhoneRouteImport } from './routes/verify-phone'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as StatisticsRouteImport } from './routes/statistics'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -22,6 +23,11 @@ import { Route as OnboardingCompanyRouteImport } from './routes/onboarding.compa
 const VerifyPhoneRoute = VerifyPhoneRouteImport.update({
   id: '/verify-phone',
   path: '/verify-phone',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StatisticsRoute = StatisticsRouteImport.update({
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/statistics': typeof StatisticsRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/verify-phone': typeof VerifyPhoneRoute
   '/onboarding/company': typeof OnboardingCompanyRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/statistics': typeof StatisticsRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/verify-phone': typeof VerifyPhoneRoute
   '/onboarding/company': typeof OnboardingCompanyRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/statistics': typeof StatisticsRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/verify-phone': typeof VerifyPhoneRoute
   '/onboarding/company': typeof OnboardingCompanyRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/statistics'
+    | '/verify-email'
     | '/verify-phone'
     | '/onboarding/company'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/statistics'
+    | '/verify-email'
     | '/verify-phone'
     | '/onboarding/company'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/statistics'
+    | '/verify-email'
     | '/verify-phone'
     | '/onboarding/company'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   StatisticsRoute: typeof StatisticsRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
   VerifyPhoneRoute: typeof VerifyPhoneRoute
   OnboardingCompanyRoute: typeof OnboardingCompanyRoute
 }
@@ -154,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/verify-phone'
       fullPath: '/verify-phone'
       preLoaderRoute: typeof VerifyPhoneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/statistics': {
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   StatisticsRoute: StatisticsRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
   VerifyPhoneRoute: VerifyPhoneRoute,
   OnboardingCompanyRoute: OnboardingCompanyRoute,
 }

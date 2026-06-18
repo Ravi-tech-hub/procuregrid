@@ -12,7 +12,7 @@ const PUBLIC_SUPABASE_FALLBACK = {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtbHV1bHphYXF0bWR2Ynpxbm94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1ODU4MDEsImV4cCI6MjA5NDE2MTgwMX0.mW9saKRiMmsaQKkHea-4646qV9YxukYriPiK_36C3jk",
 } as const;
 
-function getSupabaseConfig() {
+export function getSupabaseConfig() {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || PUBLIC_SUPABASE_FALLBACK.url;
   const supabaseAnonKey =
     import.meta.env.VITE_SUPABASE_ANON_KEY ||
@@ -29,6 +29,18 @@ function getSupabaseConfig() {
   }
 
   return { supabaseUrl, supabaseAnonKey };
+}
+
+export function createSupabaseEphemeralClient() {
+  const { supabaseUrl, supabaseAnonKey } = getSupabaseConfig();
+
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false,
+    },
+  });
 }
 
 export function getSupabaseBrowserClient() {

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth";
+import { beginEmailAuth } from "@/lib/email-auth";
 import {
   buildE164PhoneNumber,
   parseIdentifierByType,
@@ -141,27 +142,28 @@ function LoginPage() {
         return;
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { error: beginEmailAuthError } = await beginEmailAuth({
+        supabase,
         email: parsedIdentifier.value,
         password,
+        mode: "login",
       });
 
-      if (signInError) {
+      if (beginEmailAuthError) {
         setError(t("authPages.login.wrongPassword"));
         shouldClearStage = true;
         return;
       }
 
-      setSubmitStage(t("authPages.login.stageLoadingWorkspace"));
-      const nextState = await refreshSession();
-
-      if (nextState.user) {
-        setSubmitStage(t("authPages.login.stageLoadingWorkspaceDetails"));
-        return;
-      }
-
-      setError(t("authPages.login.missingSession"));
-      shouldClearStage = true;
+      navigate({
+        to: "/verify-email",
+        search: {
+          email: parsedIdentifier.value,
+          mode: "login",
+        },
+        replace: true,
+      });
+      return;
     } catch (nextError) {
       const message = nextError instanceof Error ? nextError.message : "Unknown sign-in error";
       setError(message);
