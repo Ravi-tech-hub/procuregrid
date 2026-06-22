@@ -6,6 +6,7 @@ import { AppWorkspaceShell } from "@/components/app/AppWorkspaceShell";
 import { BuyerWorkspace } from "@/components/app/BuyerWorkspace";
 import { SupplierWorkspace } from "@/components/app/SupplierWorkspace";
 import type { WorkspaceMode } from "@/components/app/workspace-data";
+import { Footer } from "@/components/site/Footer";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/app")({
@@ -64,6 +65,7 @@ function AppHomePage() {
       activeSection={activeSection}
       onSectionChange={setActiveSection}
       onModeChange={company.company_type === "hybrid" ? handleModeChange : undefined}
+      footer={<Footer />}
     >
       {mode === "buyer" ? (
         <BuyerWorkspace

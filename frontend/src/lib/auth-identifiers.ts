@@ -7,6 +7,7 @@ export type ParsedAuthIdentifier = {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const E164_PHONE_REGEX = /^\+[1-9]\d{7,14}$/;
+export const EMAIL_PATTERN = String.raw`^[^\s@]+@[^\s@]+\.[^\s@]+$`;
 
 function cleanPhoneNumber(raw: string) {
   const trimmed = raw.trim();

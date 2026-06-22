@@ -11,16 +11,19 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyPhoneRouteImport } from './routes/verify-phone'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StatisticsRouteImport } from './routes/statistics'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PreferencesRouteImport } from './routes/preferences'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OnboardingCompanyRouteImport } from './routes/onboarding.company'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 
 const VerifyPhoneRoute = VerifyPhoneRouteImport.update({
   id: '/verify-phone',
@@ -30,6 +33,11 @@ const VerifyPhoneRoute = VerifyPhoneRouteImport.update({
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
   path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StatisticsRoute = StatisticsRouteImport.update({
@@ -50,6 +58,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PreferencesRoute = PreferencesRouteImport.update({
@@ -82,6 +95,11 @@ const OnboardingCompanyRoute = OnboardingCompanyRouteImport.update({
   path: '/onboarding/company',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,12 +107,15 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/preferences': typeof PreferencesRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/statistics': typeof StatisticsRoute
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-phone': typeof VerifyPhoneRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/onboarding/company': typeof OnboardingCompanyRoute
 }
 export interface FileRoutesByTo {
@@ -103,12 +124,15 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/preferences': typeof PreferencesRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/statistics': typeof StatisticsRoute
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-phone': typeof VerifyPhoneRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/onboarding/company': typeof OnboardingCompanyRoute
 }
 export interface FileRoutesById {
@@ -118,12 +142,15 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/preferences': typeof PreferencesRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/statistics': typeof StatisticsRoute
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
   '/verify-phone': typeof VerifyPhoneRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/onboarding/company': typeof OnboardingCompanyRoute
 }
 export interface FileRouteTypes {
@@ -134,12 +161,15 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/preferences'
+    | '/privacy'
     | '/reset-password'
     | '/settings'
     | '/signup'
     | '/statistics'
+    | '/terms'
     | '/verify-email'
     | '/verify-phone'
+    | '/auth/callback'
     | '/onboarding/company'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -148,12 +178,15 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/preferences'
+    | '/privacy'
     | '/reset-password'
     | '/settings'
     | '/signup'
     | '/statistics'
+    | '/terms'
     | '/verify-email'
     | '/verify-phone'
+    | '/auth/callback'
     | '/onboarding/company'
   id:
     | '__root__'
@@ -162,12 +195,15 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/preferences'
+    | '/privacy'
     | '/reset-password'
     | '/settings'
     | '/signup'
     | '/statistics'
+    | '/terms'
     | '/verify-email'
     | '/verify-phone'
+    | '/auth/callback'
     | '/onboarding/company'
   fileRoutesById: FileRoutesById
 }
@@ -177,12 +213,15 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   PreferencesRoute: typeof PreferencesRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   StatisticsRoute: typeof StatisticsRoute
+  TermsRoute: typeof TermsRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   VerifyPhoneRoute: typeof VerifyPhoneRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   OnboardingCompanyRoute: typeof OnboardingCompanyRoute
 }
 
@@ -200,6 +239,13 @@ declare module '@tanstack/react-router' {
       path: '/verify-email'
       fullPath: '/verify-email'
       preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/statistics': {
@@ -228,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preferences': {
@@ -272,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingCompanyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -281,12 +341,15 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   PreferencesRoute: PreferencesRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   StatisticsRoute: StatisticsRoute,
+  TermsRoute: TermsRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   VerifyPhoneRoute: VerifyPhoneRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   OnboardingCompanyRoute: OnboardingCompanyRoute,
 }
 export const routeTree = rootRouteImport

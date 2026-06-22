@@ -17,6 +17,7 @@ import { useAuth } from "@/lib/auth";
 import { beginEmailAuth } from "@/lib/email-auth";
 import {
   buildE164PhoneNumber,
+  EMAIL_PATTERN,
   parseIdentifierByType,
   type AuthIdentifierType,
 } from "@/lib/auth-identifiers";
@@ -279,6 +280,7 @@ function SignupPage() {
                     id="identifier"
                     type={accountMethod === "email" ? "email" : "tel"}
                     autoComplete={accountMethod === "email" ? "email" : "tel"}
+                    pattern={accountMethod === "email" ? EMAIL_PATTERN : undefined}
                     placeholder={
                       accountMethod === "email"
                         ? t("authPages.signup.emailPlaceholder")

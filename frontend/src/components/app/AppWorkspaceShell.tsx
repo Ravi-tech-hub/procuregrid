@@ -39,12 +39,14 @@ export function AppWorkspaceShell({
   activeSection,
   onSectionChange,
   onModeChange,
+  footer,
   children,
 }: {
   mode: WorkspaceMode;
   activeSection: string;
   onSectionChange: (section: string) => void;
   onModeChange?: (mode: WorkspaceMode) => void;
+  footer?: ReactNode;
   children: ReactNode;
 }) {
   const { t } = useTranslation();
@@ -266,6 +268,7 @@ export function AppWorkspaceShell({
         <main className="min-h-[calc(100vh-4.25rem)] min-w-0 overflow-x-hidden px-3 py-4 sm:px-4 md:p-6 xl:p-7">
           <div className="mx-auto w-full max-w-[1600px]">{children}</div>
         </main>
+        {footer ? <div className="border-t border-[#dce4ee] bg-white">{footer}</div> : null}
       </div>
 
       <Modal
