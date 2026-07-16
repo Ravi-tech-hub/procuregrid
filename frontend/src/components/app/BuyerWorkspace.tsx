@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ArrowRight,
   ClipboardCheck,
@@ -21,6 +22,8 @@ import {
 } from "@/components/app/DashboardPrimitives";
 import { buyerSectionCopy } from "@/components/app/workspace-data";
 import { Button } from "@/components/ui/button";
+import { CreateRfqDialog } from "@/components/app/CreateRfqDialog";
+import { BuyerRfqsSection } from "@/components/app/BuyerRfqsSection";
 
 const recentRfqData = [
   ["RFQ-00024", "Stainless Steel Sheets", "Raw Materials", "12", "2", "sent", "03 Jun 2026"],
@@ -40,8 +43,20 @@ export function BuyerWorkspace({
   displayName: string;
 }) {
   const { t } = useTranslation();
+  const [rfqOpen, setRfqOpen] = useState(false);
 
   if (activeSection !== "dashboard") {
+    // RFQ section — real page
+    if (activeSection === "rfqs") {
+      return (
+        <>
+          <BuyerRfqsSection onOpenCreateDialog={() => setRfqOpen(true)} />
+          <CreateRfqDialog open={rfqOpen} onClose={() => setRfqOpen(false)} />
+        </>
+      );
+    }
+
+    // All other sections — placeholder
     const section = buyerSectionCopy[activeSection] ?? {
       titleKey: "workspace.sections.buyer.default.title",
       descriptionKey: "workspace.sections.buyer.default.description",
@@ -85,7 +100,7 @@ export function BuyerWorkspace({
         </div>
         <Button
           type="button"
-          onClick={() => onSectionChange("rfqs")}
+          onClick={() => setRfqOpen(true)}
           variant="buyer"
           className="w-full sm:w-auto"
         >
@@ -260,7 +275,7 @@ export function BuyerWorkspace({
                 FileInput,
                 t("workspace.buyer.actions.createRfq"),
                 t("workspace.buyer.actions.createRfqSub"),
-                "rfqs",
+                "__rfq_dialog__",
               ],
               [
                 ShoppingCart,
@@ -294,11 +309,12 @@ export function BuyerWorkspace({
               ],
             ].map(([Icon, title, subtitle, section]) => {
               const ActionIcon = Icon as typeof FileInput;
+              const isRfqAction = section === "__rfq_dialog__";
               return (
                 <Button
                   key={String(title)}
                   type="button"
-                  onClick={() => onSectionChange(String(section))}
+                  onClick={() => isRfqAction ? setRfqOpen(true) : onSectionChange(String(section))}
                   variant="ghost"
                   className="h-auto w-full justify-start border border-transparent p-3 text-left hover:border-[#dfe7ef] hover:bg-[#f8fafc]"
                 >
@@ -322,6 +338,8 @@ export function BuyerWorkspace({
           </div>
         </DashboardPanel>
       </div>
+
+      <CreateRfqDialog open={rfqOpen} onClose={() => setRfqOpen(false)} />
     </div>
   );
 }

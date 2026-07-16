@@ -1,0 +1,24 @@
+{
+  "name": "procuregrid",
+  "version": "1.0.0",
+  "description": "ProcureGrid is a protected B2B procurement platform for Indian manufacturers and industrial SMEs.\r The MVP focuses on secure company onboarding and the RFQ-to-quotation workflow for buyers,\r suppliers, and platform administrators.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ravi-tech-hub/procuregrid.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ravi-tech-hub/procuregrid/issues"
+  },
+  "homepage": "https://github.com/Ravi-tech-hub/procuregrid#readme"
+}
