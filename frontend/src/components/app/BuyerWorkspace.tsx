@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ArrowRight,
   ClipboardCheck,
@@ -44,14 +44,26 @@ export function BuyerWorkspace({
 }) {
   const { t } = useTranslation();
   const [rfqOpen, setRfqOpen] = useState(false);
+  const rfqListRefreshRef = useRef<(() => void) | null>(null);
 
   if (activeSection !== "dashboard") {
     // RFQ section — real page
     if (activeSection === "rfqs") {
       return (
         <>
-          <BuyerRfqsSection onOpenCreateDialog={() => setRfqOpen(true)} />
-          <CreateRfqDialog open={rfqOpen} onClose={() => setRfqOpen(false)} />
+          <BuyerRfqsSection
+            onOpenCreateDialog={() => setRfqOpen(true)}
+            onRfqCreated={(refresh) => { rfqListRefreshRef.current = refresh; }}
+          />
+          <CreateRfqDialog
+            open={rfqOpen}
+            onClose={() => setRfqOpen(false)}
+            onSuccess={() => {
+              setRfqOpen(false);
+              // Small delay so success screen is visible, then refresh
+              setTimeout(() => rfqListRefreshRef.current?.(), 1200);
+            }}
+          />
         </>
       );
     }

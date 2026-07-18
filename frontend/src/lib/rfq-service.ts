@@ -1,29 +1,38 @@
 /**
  * rfq-service.ts
- * ─────────────────────────────────────────────────────────────
- * All Supabase interactions for creating and managing RFQs.
- * Called from CreateRfqDialog — keeps DB logic out of the UI component.
+ * Works with the EXISTING rfqs table — no migration needed.
+ * All spec attributes, delivery timeline and payment terms are
+ * serialized into the `specifications` text column.
  */
 
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 
-// ── Types ─────────────────────────────────────────────────────
+// ── Types ──────────────────────────────────────────────────────────────────
 
-export type RfqVisibility = "public" | "private" | "selected";
+export type RfqVisibility    = "public" | "private" | "selected";
+export type DeliveryTimeline = "same_day" | "within_15_days" | "within_1_month" | "flexible";
+export type PaymentTerms     = "full_advance" | "loan_finance" | "credit_post_delivery" | "cod";
 
 export interface CreateRfqPayload {
   companyId: string;
   userId: string;
-  category: string;
+  // Step 1
   productName: string;
+  category: string;
   quantity: number;
   unit: string;
+  // Step 2 — serialized into specifications
+  specAttributes: Record<string, string>;   // { inner_diameter: "4 inch", ... }
+  specLabels: Record<string, string>;       // { inner_diameter: "Inner Diameter", ... }
+  freeText: string;                         // extra notes from buyer
+  files: File[];
+  // Step 3 — delivery / payment included in specifications text
+  deliveryTimeline?: DeliveryTimeline;
+  paymentTerms?: PaymentTerms;
   deliveryLocation: string;
-  expectedDeliveryDate: string; // ISO date string "YYYY-MM-DD"
-  specifications: string;
+  expectedDeliveryDate: string;
   visibility: RfqVisibility;
   selectedSuppliers?: string;
-  files: File[];
 }
 
 export interface CreatedRfq {
@@ -39,7 +48,59 @@ export interface CreatedRfq {
 
 const RFQ_DOCUMENTS_BUCKET = "rfq-documents";
 
-// ── Helpers ───────────────────────────────────────────────────
+// ── Delivery / Payment labels (for readable spec text) ────────────────────
+
+const DELIVERY_LABELS: Record<string, string> = {
+  same_day:       "Same Day",
+  within_15_days: "Within 15 Days",
+  within_1_month: "Within 1 Month",
+  flexible:       "Flexible",
+};
+
+const PAYMENT_LABELS: Record<string, string> = {
+  full_advance:         "Full Advance",
+  loan_finance:         "Loan / Finance",
+  credit_post_delivery: "Credit (Post-Delivery)",
+  cod:                  "COD",
+};
+
+// ── Build human-readable specifications string ────────────────────────────
+
+export function buildSpecText(payload: {
+  specAttributes: Record<string, string>;
+  specLabels: Record<string, string>;
+  freeText: string;
+  deliveryTimeline?: DeliveryTimeline;
+  paymentTerms?: PaymentTerms;
+}): string {
+  const lines: string[] = [];
+
+  // Spec attributes from chips
+  for (const [key, value] of Object.entries(payload.specAttributes)) {
+    if (!value) continue;
+    const cleaned = value.startsWith("__other__:") ? value.replace("__other__:", "").trim() : value;
+    if (!cleaned) continue;
+    const label = payload.specLabels[key] ?? key;
+    lines.push(`${label}: ${cleaned}`);
+  }
+
+  // Free-text notes
+  if (payload.freeText.trim()) {
+    lines.push(payload.freeText.trim());
+  }
+
+  // Delivery & payment (appended at end)
+  if (payload.deliveryTimeline) {
+    lines.push(`Delivery: ${DELIVERY_LABELS[payload.deliveryTimeline] ?? payload.deliveryTimeline}`);
+  }
+  if (payload.paymentTerms) {
+    lines.push(`Payment Terms: ${PAYMENT_LABELS[payload.paymentTerms] ?? payload.paymentTerms}`);
+  }
+
+  return lines.join("\n") || "—";
+}
+
+// ── File extension helper ─────────────────────────────────────────────────
 
 function getFileExtension(file: File): string {
   const ext = file.name.split(".").pop()?.trim().toLowerCase();
@@ -53,18 +114,19 @@ function getFileExtension(file: File): string {
   }
 }
 
-// ── Main service function ─────────────────────────────────────
+// ── createRfq — uses EXISTING schema only ────────────────────────────────
 
-/**
- * Creates a new RFQ row, then uploads any attached documents to Storage
- * and records them in rfq_documents.
- *
- * Returns the created RFQ record or throws an error with a user-readable message.
- */
 export async function createRfq(payload: CreateRfqPayload): Promise<CreatedRfq> {
   const supabase = getSupabaseBrowserClient();
 
-  // 1. Insert RFQ row
+  const specifications = buildSpecText({
+    specAttributes:  payload.specAttributes,
+    specLabels:      payload.specLabels,
+    freeText:        payload.freeText,
+    deliveryTimeline: payload.deliveryTimeline,
+    paymentTerms:    payload.paymentTerms,
+  });
+
   const { data: rfq, error: rfqError } = await supabase
     .from("rfqs")
     .insert({
@@ -76,10 +138,9 @@ export async function createRfq(payload: CreateRfqPayload): Promise<CreatedRfq> 
       unit:                   payload.unit,
       delivery_location:      payload.deliveryLocation.trim(),
       expected_delivery_date: payload.expectedDeliveryDate,
-      specifications:         payload.specifications.trim(),
+      specifications,                                      // ← packed into existing column
       visibility:             payload.visibility,
       selected_suppliers:     payload.selectedSuppliers?.trim() || null,
-      // status defaults to 'open' in DB; set 'draft' if private
       status:                 payload.visibility === "private" ? "draft" : "open",
     })
     .select("id, rfq_number, product_name, status, visibility, quantity, unit, created_at")
@@ -89,65 +150,51 @@ export async function createRfq(payload: CreateRfqPayload): Promise<CreatedRfq> 
     throw new Error(rfqError?.message ?? "Failed to create RFQ.");
   }
 
-  // 2. Upload files (if any)
-  if (payload.files.length > 0) {
-    for (let i = 0; i < payload.files.length; i++) {
-      const file = payload.files[i];
-      const ext  = getFileExtension(file);
-      const storagePath = `company/${payload.companyId}/rfq/${rfq.id}/${crypto.randomUUID()}.${ext}`;
+  // Upload files
+  for (let i = 0; i < payload.files.length; i++) {
+    const file = payload.files[i];
+    const ext  = getFileExtension(file);
+    const storagePath = `company/${payload.companyId}/rfq/${rfq.id}/${crypto.randomUUID()}.${ext}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from(RFQ_DOCUMENTS_BUCKET)
-        .upload(storagePath, file, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: file.type || undefined,
-        });
+    const { error: uploadError } = await supabase.storage
+      .from(RFQ_DOCUMENTS_BUCKET)
+      .upload(storagePath, file, { cacheControl: "3600", upsert: false, contentType: file.type || undefined });
 
-      if (uploadError) {
-        // Non-fatal: RFQ is already created — just skip this file and continue
-        console.warn(`[rfq-service] Failed to upload file "${file.name}":`, uploadError.message);
-        continue;
-      }
+    if (uploadError) {
+      console.warn(`[rfq-service] Upload failed for "${file.name}":`, uploadError.message);
+      continue;
+    }
 
-      // 3. Record document metadata
-      const { error: docError } = await supabase.from("rfq_documents").insert({
-        rfq_id:          rfq.id,
-        company_id:      payload.companyId,
-        storage_bucket:  RFQ_DOCUMENTS_BUCKET,
-        storage_path:    storagePath,
-        original_name:   file.name,
-        mime_type:       file.type || null,
-        file_size_bytes: file.size,
-        display_name:    file.name,
-        sort_order:      i,
-      });
+    const { error: docError } = await supabase.from("rfq_documents").insert({
+      rfq_id:          rfq.id,
+      company_id:      payload.companyId,
+      storage_bucket:  RFQ_DOCUMENTS_BUCKET,
+      storage_path:    storagePath,
+      original_name:   file.name,
+      mime_type:       file.type || null,
+      file_size_bytes: file.size,
+      display_name:    file.name,
+      sort_order:      i,
+    });
 
-      if (docError) {
-        // Non-fatal: clean up the orphaned storage file
-        console.warn(`[rfq-service] Failed to record document metadata for "${file.name}":`, docError.message);
-        await supabase.storage.from(RFQ_DOCUMENTS_BUCKET).remove([storagePath]);
-      }
+    if (docError) {
+      console.warn(`[rfq-service] Doc metadata failed for "${file.name}":`, docError.message);
+      await supabase.storage.from(RFQ_DOCUMENTS_BUCKET).remove([storagePath]);
     }
   }
 
   return rfq as CreatedRfq;
 }
 
-/**
- * Fetches all RFQs for a company, ordered by newest first.
- */
+// ── getCompanyRfqs — unchanged ────────────────────────────────────────────
+
 export async function getCompanyRfqs(companyId: string) {
   const supabase = getSupabaseBrowserClient();
-
   const { data, error } = await supabase
     .from("rfqs")
-    .select(
-      "id, rfq_number, category, product_name, quantity, unit, status, visibility, quote_count, created_at, expected_delivery_date"
-    )
+    .select("id, rfq_number, category, product_name, quantity, unit, status, visibility, quote_count, created_at, expected_delivery_date")
     .eq("company_id", companyId)
     .order("created_at", { ascending: false });
-
   if (error) throw new Error(error.message);
   return data ?? [];
 }

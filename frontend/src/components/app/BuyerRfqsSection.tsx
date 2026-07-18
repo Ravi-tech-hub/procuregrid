@@ -67,8 +67,11 @@ const STATUS_FILTERS: { label: string; value: FilterStatus }[] = [
 
 export function BuyerRfqsSection({
   onOpenCreateDialog,
+  onRfqCreated,
 }: {
   onOpenCreateDialog: () => void;
+  /** Assign this to CreateRfqDialog's onSuccess so the list auto-refreshes */
+  onRfqCreated?: (refresh: () => void) => void;
 }) {
   const { company } = useAuth();
   const [rfqs, setRfqs] = useState<RfqRow[]>([]);
@@ -92,6 +95,8 @@ export function BuyerRfqsSection({
   }
 
   useEffect(() => { void load(); }, [company?.id]);
+  // Register the refresh function with the parent
+  useEffect(() => { onRfqCreated?.(load); }, []);
 
   // ── Filtering ────────────────────────────────────────────────
   const filtered = rfqs.filter((r) => {
