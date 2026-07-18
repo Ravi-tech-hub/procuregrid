@@ -1,4 +1,4 @@
-import { useState, useRef, useId, isValidElement, cloneElement, type ReactNode, type DragEvent, type FormEvent } from "react";
+import { useState, useRef, useId, isValidElement, cloneElement, lazy, Suspense, type ReactNode, type DragEvent, type FormEvent } from "react";
 import { useAuth } from "@/lib/auth";
 import { createRfq, type CreatedRfq } from "@/lib/rfq-service";
 import {
@@ -38,7 +38,9 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { rfqCategories, rfqCategoryGroups } from "@/components/app/rfq-categories";
-import { DatePickerField } from "@/components/ui/DatePickerField";
+const DatePickerField = lazy(() =>
+  import("@/components/ui/DatePickerField").then((m) => ({ default: m.DatePickerField }))
+);
 
 
 
@@ -417,13 +419,17 @@ export function CreateRfqDialog({
                 </FormField>
 
                 <FormField label="Expected Delivery Date" required error={errors.expectedDeliveryDate} icon={Calendar}>
-                  <DatePickerField
-                    value={form.expectedDeliveryDate}
-                    onChange={(v) => set("expectedDeliveryDate", v)}
-                    minDate={todayStr}
-                    error={errors.expectedDeliveryDate}
-                    placeholder="Pick a delivery date"
-                  />
+                  <Suspense fallback={
+                    <div className="h-9 w-full animate-pulse rounded-md border border-input bg-muted" />
+                  }>
+                    <DatePickerField
+                      value={form.expectedDeliveryDate}
+                      onChange={(v) => set("expectedDeliveryDate", v)}
+                      minDate={todayStr}
+                      error={errors.expectedDeliveryDate}
+                      placeholder="Pick a delivery date"
+                    />
+                  </Suspense>
                 </FormField>
 
                 <div className="sm:col-span-2">
