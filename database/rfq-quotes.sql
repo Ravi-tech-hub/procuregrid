@@ -163,13 +163,29 @@ with check (
   and submitted_by_user_id = auth.uid()
 );
 
--- UPDATE: supplier can update their own quote (withdraw, revise)
+-- UPDATE: supplier can update their own quote, and buyer can accept/reject quotes on their RFQs
 drop policy if exists rfq_quotes_update on public.rfq_quotes;
 create policy rfq_quotes_update
 on public.rfq_quotes for update
 to authenticated
-using (public.is_company_member(supplier_company_id, auth.uid()))
-with check (public.is_company_member(supplier_company_id, auth.uid()));
+using (
+  public.is_company_member(supplier_company_id, auth.uid())
+  or
+  exists (
+    select 1 from public.rfqs r
+    where r.id = rfq_quotes.rfq_id
+      and public.is_company_member(r.company_id, auth.uid())
+  )
+)
+with check (
+  public.is_company_member(supplier_company_id, auth.uid())
+  or
+  exists (
+    select 1 from public.rfqs r
+    where r.id = rfq_quotes.rfq_id
+      and public.is_company_member(r.company_id, auth.uid())
+  )
+);
 
 -- DELETE: supplier can delete their own quote
 drop policy if exists rfq_quotes_delete on public.rfq_quotes;
