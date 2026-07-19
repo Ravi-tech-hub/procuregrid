@@ -24,6 +24,7 @@ import { buyerSectionCopy } from "@/components/app/workspace-data";
 import { Button } from "@/components/ui/button";
 import { CreateRfqDialog } from "@/components/app/CreateRfqDialog";
 import { BuyerRfqsSection } from "@/components/app/BuyerRfqsSection";
+import { BuyerQuotesSection } from "@/components/app/BuyerQuotesSection";
 
 const recentRfqData = [
   ["RFQ-00024", "Stainless Steel Sheets", "Raw Materials", "12", "2", "sent", "03 Jun 2026"],
@@ -66,6 +67,10 @@ export function BuyerWorkspace({
           />
         </>
       );
+    }
+
+    if (activeSection === "quotes") {
+      return <BuyerQuotesSection />;
     }
 
     // All other sections — placeholder

@@ -123,6 +123,31 @@ export async function getMyQuotes(supplierCompanyId: string): Promise<(RfqQuote 
   })) as (RfqQuote & { rfq_product_name?: string; rfq_number?: string })[];
 }
 
+// ── Get quotes received by a buyer (buyer view) ───────────────────────────
+
+export async function getQuotesForBuyer(buyerCompanyId: string): Promise<(RfqQuote & { rfq_product_name?: string; rfq_number?: string })[]> {
+  const supabase = getSupabaseBrowserClient();
+
+  const { data, error } = await supabase
+    .from("rfq_quotes")
+    .select(`
+      *,
+      rfqs!inner ( rfq_number, product_name, company_id ),
+      companies:supplier_company_id ( name )
+    `)
+    .eq("rfqs.company_id", buyerCompanyId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map((q: any) => ({
+    ...q,
+    rfq_product_name: q.rfqs?.product_name,
+    rfq_number:       q.rfqs?.rfq_number,
+    supplier_company_name: q.companies?.name || "Unknown Supplier",
+  })) as (RfqQuote & { rfq_product_name?: string; rfq_number?: string })[];
+}
+
 // ── Withdraw quote ─────────────────────────────────────────────────────────
 
 export async function withdrawQuote(quoteId: string): Promise<void> {
