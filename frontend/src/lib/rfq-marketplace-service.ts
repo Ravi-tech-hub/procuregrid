@@ -25,6 +25,7 @@ export type MarketplaceRfq = {
   matchScore: number;          // 0–100 — how well RFQ matches supplier catalog
   matchReasons: string[];      // human-readable match reasons
   alreadyQuoted: boolean;
+  quoteStatus?: string;
 };
 
 // ── Fetch all public open RFQs ─────────────────────────────────────────────
@@ -46,16 +47,20 @@ async function fetchPublicRfqs() {
   }));
 }
 
-// ── Fetch RFQ IDs the supplier already quoted ──────────────────────────────
+// ── Fetch quotes and their status that the supplier already submitted ──────────
 
-async function fetchQuotedRfqIds(supplierCompanyId: string): Promise<Set<string>> {
+async function fetchQuotedQuotes(supplierCompanyId: string): Promise<Record<string, string>> {
   const supabase = getSupabaseBrowserClient();
   const { data } = await supabase
     .from("rfq_quotes")
-    .select("rfq_id")
-    .eq("supplier_company_id", supplierCompanyId)
-    .in("status", ["submitted", "accepted"]);
-  return new Set((data ?? []).map((q: { rfq_id: string }) => q.rfq_id));
+    .select("rfq_id, status")
+    .eq("supplier_company_id", supplierCompanyId);
+
+  const dict: Record<string, string> = {};
+  (data ?? []).forEach((q: { rfq_id: string; status: string }) => {
+    dict[q.rfq_id] = q.status;
+  });
+  return dict;
 }
 
 // ── Score one RFQ against catalog ─────────────────────────────────────────
@@ -104,10 +109,10 @@ function scoreRfq(
 // ── Main: get matching RFQs for supplier ──────────────────────────────────
 
 export async function getMatchingRfqs(supplierCompanyId: string): Promise<MarketplaceRfq[]> {
-  const [allRfqs, catalog, quotedIds] = await Promise.all([
+  const [allRfqs, catalog, quotedQuotes] = await Promise.all([
     fetchPublicRfqs(),
     getSupplierCatalog(supplierCompanyId),
-    fetchQuotedRfqIds(supplierCompanyId),
+    fetchQuotedQuotes(supplierCompanyId),
   ]);
 
   // Build supplier index sets
@@ -133,7 +138,8 @@ export async function getMatchingRfqs(supplierCompanyId: string): Promise<Market
         specifications: rfq.specifications,
         matchScore:    score,
         matchReasons:  reasons,
-        alreadyQuoted: quotedIds.has(rfq.id),
+        alreadyQuoted: !!quotedQuotes[rfq.id],
+        quoteStatus:   quotedQuotes[rfq.id],
       } as MarketplaceRfq;
     })
     .sort((a, b) => {

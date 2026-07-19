@@ -126,8 +126,18 @@ export function SupplierRfqsSection() {
                     <span className="font-mono text-xs text-[#1d5b91]">{rfq.rfq_number}</span>
                     <MatchBadge score={rfq.matchScore} />
                     {rfq.alreadyQuoted && (
-                      <span className="flex items-center gap-1 rounded-full bg-[#e8f5f0] px-2 py-0.5 text-[11px] font-semibold text-[#176b5a]">
-                        <CheckCircle2 className="h-3 w-3" /> Quoted
+                      <span className={cn(
+                        "flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                        rfq.quoteStatus === "accepted" ? "bg-[#e8f5f0] text-[#176b5a]" :
+                        rfq.quoteStatus === "rejected" ? "bg-[#fdecea] text-[#d9534f]" :
+                        rfq.quoteStatus === "withdrawn" ? "bg-[#f1f3f5] text-[#6c757d]" :
+                        "bg-[#edf4fb] text-[#1d5b91]"
+                      )}>
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        {rfq.quoteStatus === "accepted" ? "Quote Accepted" :
+                         rfq.quoteStatus === "rejected" ? "Quote Rejected" :
+                         rfq.quoteStatus === "withdrawn" ? "Quote Withdrawn" :
+                         "Quoted"}
                       </span>
                     )}
                   </div>
@@ -153,7 +163,12 @@ export function SupplierRfqsSection() {
                 </div>
                 <div className="shrink-0">
                   {rfq.alreadyQuoted ? (
-                    <Button variant="outline" size="sm" disabled>Quoted ✓</Button>
+                    <Button variant="outline" size="sm" disabled>
+                      {rfq.quoteStatus === "accepted" ? "Accepted ✓" :
+                       rfq.quoteStatus === "rejected" ? "Rejected ✗" :
+                       rfq.quoteStatus === "withdrawn" ? "Withdrawn" :
+                       "Quoted ✓"}
+                    </Button>
                   ) : (
                     <Button variant="supplier" size="sm" onClick={() => setQuoteRfq(rfq)} className="gap-1.5">
                       <Send className="h-3.5 w-3.5" /> Quote
