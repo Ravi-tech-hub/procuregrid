@@ -24,6 +24,7 @@ import {
 import { SupplierMyInfoSection } from "@/components/app/SupplierMyInfoSection";
 import { SupplierCatalogSection } from "@/components/app/SupplierCatalogSection";
 import { SupplierRfqsSection } from "@/components/app/SupplierRfqsSection";
+import { SupplierQuotesSection } from "@/components/app/SupplierQuotesSection";
 import { supplierSectionCopy } from "@/components/app/workspace-data";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
@@ -79,6 +80,10 @@ export function SupplierWorkspace({
 
   if (activeSection === "opportunities") {
     return <SupplierRfqsSection />;
+  }
+
+  if (activeSection === "quotes") {
+    return <SupplierQuotesSection />;
   }
 
   if (activeSection !== "dashboard") {
