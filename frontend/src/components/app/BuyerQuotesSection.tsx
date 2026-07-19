@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
-import { getQuotesForBuyer, type RfqQuote } from "@/lib/quote-service";
+import { getQuotesForBuyer, updateQuoteStatus, type RfqQuote } from "@/lib/quote-service";
 import { StatusPill } from "@/components/app/DashboardPrimitives";
 import { cn } from "@/lib/utils";
 
@@ -46,6 +46,29 @@ export function BuyerQuotesSection() {
       setError(e instanceof Error ? e.message : "Failed to load incoming quotes.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleStatusChange(quoteId: string, newStatus: "accepted" | "rejected") {
+    if (!confirm(`Are you sure you want to mark this quote as ${newStatus}?`)) return;
+    try {
+      await updateQuoteStatus(quoteId, newStatus);
+      if (newStatus === "accepted" && company) {
+        // Find which RFQ this quote belongs to
+        const thisQuote = quotes.find(q => q.id === quoteId);
+        if (thisQuote) {
+          // Automatically reject other submitted quotes for that same RFQ
+          const otherQuotes = quotes.filter(
+            q => q.rfq_id === thisQuote.rfq_id && q.id !== quoteId && q.status === "submitted"
+          );
+          await Promise.all(otherQuotes.map(q => updateQuoteStatus(q.id, "rejected")));
+        }
+      }
+      if (company) {
+        setQuotes(await getQuotesForBuyer(company.id));
+      }
+    } catch (e) {
+      alert("Failed to update status: " + (e instanceof Error ? e.message : String(e)));
     }
   }
 
@@ -199,6 +222,28 @@ export function BuyerQuotesSection() {
                         )}
                       </div>
                     </div>
+
+                    {/* Actions */}
+                    {q.status === "submitted" && (
+                      <div className="mt-4 flex gap-2 border-t border-[#f0f4f8] pt-3 sm:col-span-2 justify-end">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => void handleStatusChange(q.id, "rejected")}
+                          className="text-[#d9534f] hover:bg-[#fdecea] hover:text-[#d9534f] border-[#d9534f]/35 text-xs h-8 px-3"
+                        >
+                          Reject Quote
+                        </Button>
+                        <Button
+                          variant="buyer"
+                          size="sm"
+                          onClick={() => void handleStatusChange(q.id, "accepted")}
+                          className="text-xs h-8 px-4"
+                        >
+                          Accept Quote
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

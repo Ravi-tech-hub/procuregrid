@@ -158,3 +158,12 @@ export async function withdrawQuote(quoteId: string): Promise<void> {
     .eq("id", quoteId);
   if (error) throw new Error(error.message);
 }
+
+export async function updateQuoteStatus(quoteId: string, status: "accepted" | "rejected"): Promise<void> {
+  const supabase = getSupabaseBrowserClient();
+  const { error } = await supabase
+    .from("rfq_quotes")
+    .update({ status })
+    .eq("id", quoteId);
+  if (error) throw new Error(error.message);
+}
