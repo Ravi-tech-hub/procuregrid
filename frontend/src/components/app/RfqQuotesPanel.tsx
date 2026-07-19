@@ -38,6 +38,20 @@ export function RfqQuotesPanel({ rfqId, quoteCount }: Props) {
 
   async function handleStatusChange(quoteId: string, newStatus: "accepted" | "rejected") {
     if (!confirm(`Are you sure you want to mark this quote as ${newStatus}?`)) return;
+
+    // Optimistic local state update
+    setQuotes((prev) =>
+      prev.map((q) => {
+        if (q.id === quoteId) {
+          return { ...q, status: newStatus };
+        }
+        if (newStatus === "accepted" && q.status === "submitted") {
+          return { ...q, status: "rejected" as const };
+        }
+        return q;
+      })
+    );
+
     try {
       await updateQuoteStatus(quoteId, newStatus);
       if (newStatus === "accepted") {
@@ -45,9 +59,12 @@ export function RfqQuotesPanel({ rfqId, quoteCount }: Props) {
         const otherQuotes = quotes.filter(q => q.id !== quoteId && q.status === "submitted");
         await Promise.all(otherQuotes.map(q => updateQuoteStatus(q.id, "rejected")));
       }
-      setQuotes(await getQuotesForRfq(rfqId));
+      const fresh = await getQuotesForRfq(rfqId);
+      setQuotes(fresh);
     } catch (e) {
       alert("Failed to update status: " + (e instanceof Error ? e.message : String(e)));
+      const fresh = await getQuotesForRfq(rfqId);
+      setQuotes(fresh);
     }
   }
 
