@@ -192,7 +192,7 @@ export async function getCompanyRfqs(companyId: string) {
   const supabase = getSupabaseBrowserClient();
   const { data, error } = await supabase
     .from("rfqs")
-    .select("id, rfq_number, category, product_name, quantity, unit, status, visibility, quote_count, created_at, expected_delivery_date")
+    .select("id, rfq_number, category, product_name, quantity, unit, status, visibility, quote_count, created_at, expected_delivery_date, specifications, delivery_location")
     .eq("company_id", companyId)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);

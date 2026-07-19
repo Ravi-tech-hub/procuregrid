@@ -21,6 +21,8 @@ import {
   StatusPill,
 } from "@/components/app/DashboardPrimitives";
 import { SupplierMyInfoSection } from "@/components/app/SupplierMyInfoSection";
+import { SupplierCatalogSection } from "@/components/app/SupplierCatalogSection";
+import { SupplierRfqsSection } from "@/components/app/SupplierRfqsSection";
 import { supplierSectionCopy } from "@/components/app/workspace-data";
 import { Button } from "@/components/ui/button";
 
@@ -51,6 +53,14 @@ export function SupplierWorkspace({
 
   if (activeSection === "my-info") {
     return <SupplierMyInfoSection />;
+  }
+
+  if (activeSection === "catalog") {
+    return <SupplierCatalogSection />;
+  }
+
+  if (activeSection === "rfqs") {
+    return <SupplierRfqsSection />;
   }
 
   if (activeSection !== "dashboard") {
