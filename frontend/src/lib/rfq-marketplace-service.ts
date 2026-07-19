@@ -20,6 +20,7 @@ export type MarketplaceRfq = {
   status: string;
   quote_count: number;
   created_at: string;
+  buyer_company_name?: string;
   // computed
   matchScore: number;          // 0–100 — how well RFQ matches supplier catalog
   matchReasons: string[];      // human-readable match reasons
@@ -32,13 +33,17 @@ async function fetchPublicRfqs() {
   const supabase = getSupabaseBrowserClient();
   const { data, error } = await supabase
     .from("rfqs")
-    .select("id, rfq_number, product_name, category, quantity, unit, specifications, delivery_location, expected_delivery_date, visibility, status, quote_count, created_at")
+    .select("id, rfq_number, product_name, category, quantity, unit, specifications, delivery_location, expected_delivery_date, visibility, status, quote_count, created_at, companies:company_id ( name )")
     .eq("visibility", "public")
     .eq("status", "open")
     .order("created_at", { ascending: false })
     .limit(200);
   if (error) throw new Error(error.message);
-  return data ?? [];
+  
+  return (data ?? []).map((r: any) => ({
+    ...r,
+    buyer_company_name: r.companies?.name || "Verified Buyer",
+  }));
 }
 
 // ── Fetch RFQ IDs the supplier already quoted ──────────────────────────────

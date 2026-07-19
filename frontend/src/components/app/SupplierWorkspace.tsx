@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   ArrowRight,
   BadgeIndianRupee,
@@ -25,20 +26,12 @@ import { SupplierCatalogSection } from "@/components/app/SupplierCatalogSection"
 import { SupplierRfqsSection } from "@/components/app/SupplierRfqsSection";
 import { supplierSectionCopy } from "@/components/app/workspace-data";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
+import { getMatchingRfqs } from "@/lib/rfq-marketplace-service";
+import { getMyQuotes } from "@/lib/quote-service";
+import type { MarketplaceRfq } from "@/lib/rfq-marketplace-service";
+import type { RfqQuote } from "@/lib/quote-service";
 
-const opportunityData = [
-  ["RFQ-00418", "CNC Machined Housings", "Orion Mobility", "₹9.8L", "08 Jun 2026", "open"],
-  ["RFQ-00411", "Powder-coated Brackets", "Axis Engineering", "₹4.2L", "07 Jun 2026", "quoteDraft"],
-  ["RFQ-00403", "Precision Turned Parts", "Veda Industrial", "₹12.6L", "06 Jun 2026", "submitted"],
-  [
-    "RFQ-00396",
-    "Laser-cut Enclosures",
-    "Northstar Controls",
-    "₹7.1L",
-    "05 Jun 2026",
-    "closingSoon",
-  ],
-];
 
 export function SupplierWorkspace({
   activeSection,
@@ -50,6 +43,31 @@ export function SupplierWorkspace({
   displayName: string;
 }) {
   const { t, i18n } = useTranslation();
+  const { company } = useAuth();
+
+  const [liveRfqs, setLiveRfqs] = useState<MarketplaceRfq[]>([]);
+  const [liveQuotes, setLiveQuotes] = useState<RfqQuote[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!company) return;
+    async function loadData() {
+      if (!company) return;
+      try {
+        const [rfqsData, quotesData] = await Promise.all([
+          getMatchingRfqs(company.id),
+          getMyQuotes(company.id),
+        ]);
+        setLiveRfqs(rfqsData);
+        setLiveQuotes(quotesData);
+      } catch (err) {
+        console.error("Error loading dashboard data", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    void loadData();
+  }, [company, activeSection]);
 
   if (activeSection === "my-info") {
     return <SupplierMyInfoSection />;
@@ -79,25 +97,28 @@ export function SupplierWorkspace({
 
   const firstName = displayName.split(" ")[0] || "there";
   const monthFormatter = new Intl.DateTimeFormat(i18n.language, { month: "short" });
-  const opportunities = opportunityData.map(([id, requirement, buyer, value, dueDate, status]) => [
-    id,
-    requirement,
-    buyer,
-    value,
-    dueDate,
+
+  const opportunities = liveRfqs.slice(0, 5).map((rfq) => [
+    rfq.rfq_number,
+    rfq.product_name,
+    rfq.buyer_company_name || "Verified Buyer",
+    `${Number(rfq.quantity).toLocaleString("en-IN")} ${rfq.unit}`,
+    new Date(rfq.expected_delivery_date).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }),
     <StatusPill
-      key={`${id}-${status}`}
+      key={`${rfq.id}-${rfq.status}`}
       tone={
-        status === "open"
+        rfq.alreadyQuoted
           ? "green"
-          : status === "quoteDraft"
-            ? "amber"
-            : status === "closingSoon"
-              ? "red"
-              : "blue"
+          : rfq.status === "open"
+            ? "blue"
+            : "slate"
       }
     >
-      {t(`workspace.status.${status}`)}
+      {rfq.alreadyQuoted ? "Quoted" : rfq.status === "open" ? "Open" : rfq.status}
     </StatusPill>,
   ]);
 
@@ -127,14 +148,14 @@ export function SupplierWorkspace({
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <MetricCard
           label={t("workspace.supplier.metrics.openOpportunities")}
-          value="9"
+          value={loading ? "..." : String(liveRfqs.filter(r => !r.alreadyQuoted).length)}
           delta={t("workspace.supplier.metrics.openOpportunitiesDelta")}
           icon={<FileInput className="h-5 w-5" />}
           tone="green"
         />
         <MetricCard
           label={t("workspace.supplier.metrics.quotesSubmitted")}
-          value="16"
+          value={loading ? "..." : String(liveQuotes.length)}
           delta={t("workspace.supplier.metrics.quotesSubmittedDelta")}
           icon={<FileText className="h-5 w-5" />}
         />
