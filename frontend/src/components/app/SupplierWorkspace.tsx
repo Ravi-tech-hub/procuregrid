@@ -77,7 +77,7 @@ export function SupplierWorkspace({
     return <SupplierCatalogSection />;
   }
 
-  if (activeSection === "rfqs") {
+  if (activeSection === "opportunities") {
     return <SupplierRfqsSection />;
   }
 
