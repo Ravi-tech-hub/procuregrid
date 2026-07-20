@@ -20,13 +20,13 @@ dist-ssr
 !.env.example
 !**/.env.example
 
-# ── Lock files (optional — remove these lines if you DO want to track them) ─
-# package-lock.json          # uncomment to also ignore lock files
-# **/package-lock.json
-# yarn.lock
-# **/yarn.lock
-# pnpm-lock.yaml
-# **/pnpm-lock.yaml
+── Lock files (optional — remove these lines if you DO want to track them) ─
+package-lock.json          # uncomment to also ignore lock files
+**/package-lock.json
+yarn.lock
+**/yarn.lock
+pnpm-lock.yaml
+**/pnpm-lock.yaml
 
 # ── Logs ───────────────────────────────────────────────────────────────────
 logs

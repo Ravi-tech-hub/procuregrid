@@ -62,6 +62,12 @@ const emptyProduct: ProductFormData = {
   description: "",
   imageFile: null,
   imagePreview: null,
+  productSlug: "",
+  categorySlug: "",
+  specifications: "",
+  minOrderQty: undefined,
+  unit: "Pcs",
+  priceRange: "",
   products: [],
 };
 
@@ -92,6 +98,12 @@ function getAllProducts(productData: ProductFormData): ProductItem[] {
             description: productData.description,
             imageFile: productData.imageFile,
             imagePreview: productData.imagePreview,
+            productSlug: productData.productSlug,
+            categorySlug: productData.categorySlug,
+            specifications: productData.specifications,
+            minOrderQty: productData.minOrderQty,
+            unit: productData.unit,
+            priceRange: productData.priceRange,
           },
         ]
       : []),
@@ -293,7 +305,13 @@ function CompanyOnboardingPage() {
                 .insert({
                   company_id: companyId,
                   name: product.productName.trim(),
-                  description: product.description.trim() || null,
+                  description: product.description?.trim() || null,
+                  product_slug: product.productSlug || null,
+                  category_slug: product.categorySlug || null,
+                  specifications: product.specifications?.trim() || null,
+                  min_order_qty: product.minOrderQty ?? null,
+                  unit: product.unit || "Pcs",
+                  price_range: product.priceRange?.trim() || null,
                   display_order: index,
                 })
                 .select("id")

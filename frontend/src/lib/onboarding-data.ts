@@ -256,6 +256,12 @@ export type ProductItem = {
   description: string;
   imageFile: File | null;
   imagePreview: string | null;
+  productSlug?: string;
+  categorySlug?: string;
+  specifications?: string;
+  minOrderQty?: number;
+  unit?: string;
+  priceRange?: string;
 };
 
 export type ProductFormData = {
@@ -264,6 +270,12 @@ export type ProductFormData = {
   description: string;
   imageFile: File | null;
   imagePreview: string | null;
+  productSlug?: string;
+  categorySlug?: string;
+  specifications?: string;
+  minOrderQty?: number;
+  unit?: string;
+  priceRange?: string;
   /** Already-added products */
   products: ProductItem[];
 };
