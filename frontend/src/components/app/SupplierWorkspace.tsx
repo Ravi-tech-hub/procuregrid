@@ -103,7 +103,10 @@ export function SupplierWorkspace({
   const firstName = displayName.split(" ")[0] || "there";
   const monthFormatter = new Intl.DateTimeFormat(i18n.language, { month: "short" });
 
-  const opportunities = liveRfqs.slice(0, 5).map((rfq) => [
+  const stronglyMatchedRfqs = liveRfqs.filter((r) => r.isStrongMatch);
+  const displayDashboardRfqs = stronglyMatchedRfqs.length > 0 ? stronglyMatchedRfqs : liveRfqs;
+
+  const opportunities = displayDashboardRfqs.slice(0, 5).map((rfq) => [
     rfq.rfq_number,
     rfq.product_name,
     rfq.buyer_company_name || "Verified Buyer",
@@ -126,6 +129,9 @@ export function SupplierWorkspace({
       {rfq.alreadyQuoted ? "Quoted" : rfq.status === "open" ? "Open" : rfq.status}
     </StatusPill>,
   ]);
+
+  const openStrongCount = liveRfqs.filter((r) => !r.alreadyQuoted && r.isStrongMatch).length;
+  const openTotalCount = liveRfqs.filter((r) => !r.alreadyQuoted).length;
 
   return (
     <div className="space-y-4 sm:space-y-5">
@@ -153,8 +159,8 @@ export function SupplierWorkspace({
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <MetricCard
           label={t("workspace.supplier.metrics.openOpportunities")}
-          value={loading ? "..." : String(liveRfqs.filter(r => !r.alreadyQuoted).length)}
-          delta={t("workspace.supplier.metrics.openOpportunitiesDelta")}
+          value={loading ? "..." : String(openStrongCount > 0 ? openStrongCount : openTotalCount)}
+          delta={openStrongCount > 0 ? "Strongly matched to catalog" : t("workspace.supplier.metrics.openOpportunitiesDelta")}
           icon={<FileInput className="h-5 w-5" />}
           tone="green"
         />

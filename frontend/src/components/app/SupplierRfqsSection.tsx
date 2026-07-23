@@ -1,11 +1,11 @@
 /**
  * SupplierRfqsSection.tsx — Phase 2
- * Shows matching public RFQs with match score + Quote button.
+ * Shows strongly matching public RFQs with match score + Quote button.
  */
 import { useEffect, useState } from "react";
 import {
   Search, Loader2, AlertCircle, RefreshCw, Package,
-  Calendar, MapPin, TrendingUp, CheckCircle2, Send,
+  Calendar, MapPin, TrendingUp, CheckCircle2, Send, Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +21,8 @@ function formatDate(d: string) {
 
 function MatchBadge({ score }: { score: number }) {
   if (score === 0) return null;
-  const color = score >= 70 ? "bg-[#e8f5f0] text-[#176b5a]" : score >= 40 ? "bg-[#fff8e6] text-[#b07d0a]" : "bg-[#f0f4f8] text-[#56677a]";
-  const label = score >= 70 ? "Strong match" : score >= 40 ? "Partial match" : "Low match";
+  const color = score >= 50 ? "bg-[#e8f5f0] text-[#176b5a]" : score >= 30 ? "bg-[#fff8e6] text-[#b07d0a]" : "bg-[#f0f4f8] text-[#56677a]";
+  const label = score >= 50 ? "Strong match" : score >= 30 ? "Partial match" : "Low match";
   return (
     <span className={cn("flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold", color)}>
       <TrendingUp className="h-3 w-3" />{label}
@@ -36,6 +36,7 @@ export function SupplierRfqsSection() {
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState<string | null>(null);
   const [search, setSearch]     = useState("");
+  const [filterMode, setFilterMode] = useState<"strong" | "all">("strong");
   const [quoteRfq, setQuoteRfq] = useState<MarketplaceRfq | null>(null);
 
   async function load() {
@@ -53,7 +54,10 @@ export function SupplierRfqsSection() {
 
   useEffect(() => { void load(); }, [company?.id]);
 
-  const filtered = rfqs.filter((r) => {
+  const stronglyMatchedRfqs = rfqs.filter((r) => r.isStrongMatch);
+  const displayRfqs = filterMode === "strong" ? stronglyMatchedRfqs : rfqs;
+
+  const filtered = displayRfqs.filter((r) => {
     const q = search.toLowerCase();
     return !q || r.product_name.toLowerCase().includes(q) || r.rfq_number.toLowerCase().includes(q);
   });
@@ -63,17 +67,47 @@ export function SupplierRfqsSection() {
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6e8095]">Supplier Workspace</p>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-[#13263d] md:text-3xl">RFQ Marketplace</h1>
-          <p className="mt-1 text-sm text-[#718197]">Open RFQs from buyers — sorted by how well they match your catalog.</p>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-[#13263d] md:text-3xl">RFQ Opportunities</h1>
+          <p className="mt-1 text-sm text-[#718197]">Open RFQs from buyers — filtered by strong match to your catalog.</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => void load()}>
           <RefreshCw className="h-3.5 w-3.5" /> Refresh
         </Button>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8fa5bc]" />
-        <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by product or RFQ no…" className="pl-9 text-sm" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="inline-flex rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-1 text-xs font-medium">
+          <button
+            type="button"
+            onClick={() => setFilterMode("strong")}
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-all",
+              filterMode === "strong"
+                ? "bg-white font-semibold text-[#176b5a] shadow-sm"
+                : "text-[#64748b] hover:text-[#0f172a]"
+            )}
+          >
+            <Sparkles className="h-3.5 w-3.5 text-[#176b5a]" />
+            Strong Matches ({stronglyMatchedRfqs.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterMode("all")}
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-all",
+              filterMode === "all"
+                ? "bg-white font-semibold text-[#1d5b91] shadow-sm"
+                : "text-[#64748b] hover:text-[#0f172a]"
+            )}
+          >
+            All Opportunities ({rfqs.length})
+          </button>
+        </div>
+
+        <div className="relative max-w-sm w-full sm:w-64">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8fa5bc]" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by product or RFQ no…" className="pl-9 text-sm" />
+        </div>
       </div>
 
       {loading && (
@@ -93,16 +127,27 @@ export function SupplierRfqsSection() {
       )}
 
       {!loading && !error && filtered.length === 0 && (
-        <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed border-[#aed4c5] bg-[#f5faf8] py-20 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#e8f5f0]">
-            <Package className="h-8 w-8 text-[#176b5a]" />
+        <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed border-[#aed4c5] bg-[#f5faf8] py-16 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#e8f5f0]">
+            {filterMode === "strong" ? <Sparkles className="h-7 w-7 text-[#176b5a]" /> : <Package className="h-7 w-7 text-[#176b5a]" />}
           </div>
           <div>
-            <p className="text-base font-bold text-[#253a52]">No matching RFQs found</p>
-            <p className="mt-1 max-w-xs text-sm text-[#7b8ea3]">
-              Add products to your catalog to see matched opportunities here.
+            <p className="text-base font-bold text-[#253a52]">
+              {filterMode === "strong" ? "No strongly matching RFQs found" : "No open RFQs found"}
+            </p>
+            <p className="mt-1 max-w-sm text-sm text-[#7b8ea3]">
+              {filterMode === "strong"
+                ? rfqs.length > 0
+                  ? `There are ${rfqs.length} open RFQs, but none strongly match your catalog products yet.`
+                  : "Add products to your catalog to automatically receive strongly matched opportunities."
+                : "There are currently no open buyer RFQs."}
             </p>
           </div>
+          {filterMode === "strong" && rfqs.length > 0 && (
+            <Button variant="outline" size="sm" onClick={() => setFilterMode("all")}>
+              View All {rfqs.length} Opportunities
+            </Button>
+          )}
         </div>
       )}
 
@@ -195,3 +240,4 @@ export function SupplierRfqsSection() {
     </div>
   );
 }
+

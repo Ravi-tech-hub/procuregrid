@@ -4,7 +4,7 @@
  * Pure frontend matching — no backend AI needed.
  */
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { getSupplierCatalog } from "@/lib/catalog-service";
+import { getSupplierCatalog, type CatalogItem } from "@/lib/catalog-service";
 
 export type MarketplaceRfq = {
   id: string;
@@ -23,6 +23,7 @@ export type MarketplaceRfq = {
   buyer_company_name?: string;
   // computed
   matchScore: number;          // 0–100 — how well RFQ matches supplier catalog
+  isStrongMatch: boolean;      // score >= 50
   matchReasons: string[];      // human-readable match reasons
   alreadyQuoted: boolean;
   quoteStatus?: string;
@@ -63,47 +64,93 @@ async function fetchQuotedQuotes(supplierCompanyId: string): Promise<Record<stri
   return dict;
 }
 
-// ── Score one RFQ against catalog ─────────────────────────────────────────
+// ── Score one RFQ against catalog items ─────────────────────────────────
 
 function scoreRfq(
   rfq: { product_name: string; category: string; specifications: string | null },
-  catalogSlugs: Set<string>,
-  catalogCategories: Set<string>,
-  catalogSpecWords: Set<string>,
+  catalog: CatalogItem[],
 ): { score: number; reasons: string[] } {
   const reasons: string[] = [];
   let score = 0;
 
-  const rfqName     = rfq.product_name.toLowerCase();
-  const rfqCategory = rfq.category.toLowerCase();
-  const rfqSpecs    = (rfq.specifications ?? "").toLowerCase();
+  const rfqNameClean     = rfq.product_name.toLowerCase().trim();
+  const rfqCategoryClean = rfq.category.toLowerCase().trim();
+  const rfqSpecsClean    = (rfq.specifications ?? "").toLowerCase().trim();
 
-  // 1. Category match
-  if (catalogCategories.has(rfqCategory)) {
-    score += 50;
-    reasons.push("Category match");
-  }
+  let hasExactProductMatch = false;
+  let hasPartialProductMatch = false;
+  let hasCategoryMatch = false;
 
-  // 2. Product slug / name match
-  for (const slug of catalogSlugs) {
-    if (rfqName.includes(slug.replace(/-/g, " ")) || rfqName.includes(slug)) {
-      score += 30;
-      reasons.push("Product match");
-      break;
+  // Extract non-trivial words from RFQ product name
+  const rfqNameWords = rfqNameClean
+    .split(/[\s,/\-\\_]+/)
+    .filter((w) => w.length > 2);
+
+  const specWords = new Set<string>();
+
+  for (const item of catalog) {
+    const itemNameClean     = (item.name ?? "").toLowerCase().trim();
+    const itemSlugClean     = (item.product_slug ?? "").toLowerCase().replace(/-/g, " ").trim();
+    const itemCategoryClean = (item.category_slug ?? "").toLowerCase().replace(/-/g, " ").trim();
+    const itemSpecsClean    = (item.specifications ?? "").toLowerCase();
+    const itemDescClean     = (item.description ?? "").toLowerCase();
+
+    // Collect spec/desc words
+    (itemSpecsClean + " " + itemDescClean)
+      .split(/[\n:,\s]+/)
+      .forEach((w) => {
+        if (w.length > 2) specWords.add(w);
+      });
+
+    // 1. Check Product Name Match
+    if (
+      (itemNameClean && (rfqNameClean.includes(itemNameClean) || itemNameClean.includes(rfqNameClean))) ||
+      (itemSlugClean && (rfqNameClean.includes(itemSlugClean) || itemSlugClean.includes(rfqNameClean)))
+    ) {
+      hasExactProductMatch = true;
+    } else if (
+      rfqNameWords.some((w) => (itemNameClean && itemNameClean.includes(w)) || (itemSlugClean && itemSlugClean.includes(w)))
+    ) {
+      hasPartialProductMatch = true;
+    }
+
+    // 2. Check Category Match
+    if (
+      itemCategoryClean &&
+      (rfqCategoryClean.includes(itemCategoryClean) || itemCategoryClean.includes(rfqCategoryClean))
+    ) {
+      hasCategoryMatch = true;
     }
   }
 
-  // 3. Spec keyword overlap
+  // 3. Count spec keyword hits
   let specHits = 0;
-  for (const word of catalogSpecWords) {
-    if (word.length > 2 && rfqSpecs.includes(word)) specHits++;
+  if (rfqSpecsClean) {
+    for (const word of specWords) {
+      if (rfqSpecsClean.includes(word)) specHits++;
+    }
   }
+
+  if (hasExactProductMatch) {
+    score += 50;
+    reasons.push("Product match");
+  } else if (hasPartialProductMatch) {
+    score += 30;
+    reasons.push("Product keyword match");
+  }
+
+  if (hasCategoryMatch) {
+    score += 35;
+    reasons.push("Category match");
+  }
+
   if (specHits > 0) {
-    score += Math.min(20, specHits * 5);
+    const specBonus = Math.min(15, specHits * 5);
+    score += specBonus;
     reasons.push(`${specHits} spec keyword${specHits > 1 ? "s" : ""} matched`);
   }
 
-  return { score, reasons };
+  return { score: Math.min(100, score), reasons };
 }
 
 // ── Main: get matching RFQs for supplier ──────────────────────────────────
@@ -115,31 +162,23 @@ export async function getMatchingRfqs(supplierCompanyId: string): Promise<Market
     fetchQuotedQuotes(supplierCompanyId),
   ]);
 
-  // Build supplier index sets
-  const catalogSlugs      = new Set(catalog.map((c) => c.product_slug ?? "").filter(Boolean));
-  const catalogCategories = new Set(catalog.map((c) => c.category_slug ?? "").filter(Boolean));
-  const catalogSpecWords  = new Set(
-    catalog
-      .flatMap((c) => (c.specifications ?? "").toLowerCase().split(/[\n:,\s]+/))
-      .filter((w) => w.length > 2),
-  );
-
-  // If supplier has no catalog yet, return all public RFQs unscored
   const noCatalog = catalog.length === 0;
 
   return allRfqs
     .map((rfq) => {
       const { score, reasons } = noCatalog
         ? { score: 0, reasons: ["Add catalog products to see match scores"] }
-        : scoreRfq(rfq, catalogSlugs, catalogCategories, catalogSpecWords);
+        : scoreRfq(rfq, catalog);
+      const isStrongMatch = score >= 50;
       return {
         ...rfq,
-        quantity:      Number(rfq.quantity),
-        specifications: rfq.specifications,
-        matchScore:    score,
-        matchReasons:  reasons,
-        alreadyQuoted: !!quotedQuotes[rfq.id],
-        quoteStatus:   quotedQuotes[rfq.id],
+        quantity:       Number(rfq.quantity),
+        specifications:  rfq.specifications,
+        matchScore:     score,
+        isStrongMatch,
+        matchReasons:   reasons,
+        alreadyQuoted:  !!quotedQuotes[rfq.id],
+        quoteStatus:    quotedQuotes[rfq.id],
       } as MarketplaceRfq;
     })
     .sort((a, b) => {

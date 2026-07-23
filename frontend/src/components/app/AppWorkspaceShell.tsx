@@ -94,7 +94,7 @@ export function AppWorkspaceShell({
         </Button>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
+      <nav className="flex-1 space-y-1 overflow-y-auto no-scrollbar px-3 py-5">
         {navItems.map((item) => {
           const Icon = item.icon;
           const selected = activeSection === item.id;
